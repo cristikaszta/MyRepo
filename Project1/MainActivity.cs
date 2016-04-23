@@ -15,8 +15,6 @@ namespace Project1
 
         protected override void OnCreate(Bundle bundle)
         {
-            //THIS IS A COMIT TEST
-            //Yes , it works
             base.OnCreate(bundle);
 
             // Set our view from the "main" layout resource
