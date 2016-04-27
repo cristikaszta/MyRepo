@@ -3,4 +3,6 @@
   <string name="playIcon">drawable/ic_av_play</string>
   <string name="pauseIcon">drawable/ic_av_pause</string>
   <string name="stopIcon">drawable/ic_av_stop</string>
+  <string name="launcherIcon">drawable/ic_launcher</string>
+
 </resources>
