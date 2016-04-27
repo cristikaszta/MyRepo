@@ -12,25 +12,25 @@
         android:layout_gravity="center_horizontal"
         android:id="@+id/linearLayout1">
         <Button
-            android:text="@string/play"
+            android:text="@string/playText"
             android:id="@+id/playButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableTop="@drawable/ic_av_play"
+            android:drawableTop="@string/playIcon"
             android:layout_gravity="center_vertical" />
         <Button
-            android:text="@string/pause"
+            android:text="@string/pauseText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/pauseButton"
-            android:drawableTop="@drawable/ic_av_pause"
+            android:drawableTop="@string/pauseIcon"
             android:layout_gravity="center_vertical" />
         <Button
-            android:text="@string/stop"
+            android:text="@string/stopText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/stopButton"
-            android:drawableTop="@drawable/ic_av_stop"
+            android:drawableTop="@string/stopIcon"
             android:layout_gravity="center_vertical" />
     </LinearLayout>
 </LinearLayout>
