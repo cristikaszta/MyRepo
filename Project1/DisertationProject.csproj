@@ -10,7 +10,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DisertationProject</RootNamespace>
-    <AssemblyName>Project1</AssemblyName>
+    <AssemblyName>DisertationProject</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <AndroidApplication>true</AndroidApplication>
     <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
@@ -49,14 +49,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\Models\PlayLists.cs" />
-    <Compile Include="Data\Models\PlayListsSongs.cs" />
-    <Compile Include="Data\Models\Songs.cs" />
-    <Compile Include="Data\Constants.cs" />
-    <Compile Include="MainActivity.cs" />
+    <Compile Include="Controller\CommonController.cs" />
+    <Compile Include="Controller\StreamingBackgroundService.cs" />
+    <Compile Include="Model\PlayLists.cs" />
+    <Compile Include="Model\PlayListsSongs.cs" />
+    <Compile Include="Model\Songs.cs" />
+    <Compile Include="Model\Constants.cs" />
+    <Compile Include="Controller\MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\StreamingService\StreamingBackgroundService.cs" />
     <Compile Include="SQLite.cs" />
     <Compile Include="SQLiteAsync.cs" />
   </ItemGroup>
@@ -82,7 +83,6 @@
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\" />
     <Folder Include="UserInterface\" />
   </ItemGroup>
   <ItemGroup>

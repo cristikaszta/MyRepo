@@ -5,12 +5,11 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
-using DisertationProject.Services.StreamingService;
 using System.Collections.Generic;
 using DisertationProject.Data;
 using System.Collections;
 
-namespace DisertationProject
+namespace DisertationProject.Controller
 {
     /// <summary>
     /// Main activity
@@ -22,39 +21,33 @@ namespace DisertationProject
         /// Dictionary of the buttons;
         /// Each item contains a key and a value
         /// </summary>
-        private IDictionary<int, Button> Buttons;
+        private IDictionary<int, Button> _buttons;
+
+        /// <summary>
+        /// Common controller object
+        /// </summary>
+        private CommonController _common;
 
         /// <summary>
         /// Object initialization method
         /// </summary>
         private void Initialize()
         {
-
-            Buttons = new Dictionary<int, Button>();
+            _common = new CommonController();
+            _buttons = new Dictionary<int, Button>();
 
             //Create the dictionaries
-            addItemToDictionary<int, Button>(Buttons, Globals.PlayButtonId, FindViewById<Button>);
-            addItemToDictionary<int, Button>(Buttons, Globals.PauseButtonId, FindViewById<Button>);
-            addItemToDictionary<int, Button>(Buttons, Globals.StopButtonId, FindViewById<Button>);
+            _common.addItemToDictionary<int, Button>(_buttons, Globals.PlayButtonId, FindViewById<Button>);
+            _common.addItemToDictionary<int, Button>(_buttons, Globals.PauseButtonId, FindViewById<Button>);
+            _common.addItemToDictionary<int, Button>(_buttons, Globals.StopButtonId, FindViewById<Button>);
 
             //Set click action
-            Buttons[Globals.PlayButtonId].Click += (sender, args) => SendAudioCommand(Globals.ActionPlay);
-            Buttons[Globals.PauseButtonId].Click += (sender, args) => SendAudioCommand(Globals.ActionPause);
-            Buttons[Globals.StopButtonId].Click += (sender, args) => SendAudioCommand(Globals.ActionStop);
+            _buttons[Globals.PlayButtonId].Click += (sender, args) => SendAudioCommand(Globals.ActionPlay);
+            _buttons[Globals.PauseButtonId].Click += (sender, args) => SendAudioCommand(Globals.ActionPause);
+            _buttons[Globals.StopButtonId].Click += (sender, args) => SendAudioCommand(Globals.ActionStop);
         }
 
-        /// <summary>
-        /// Method used to add items to dictionaries
-        /// </summary>
-        /// <typeparam name="T1">Dictionary key type parameter</typeparam>
-        /// <typeparam name="T2">Dictionary value type parameter</typeparam>
-        /// <param name="dictionary">The dictionary</param>
-        /// <param name="key">The key</param>
-        /// <param name="value">The value</param>
-        public void addItemToDictionary<T1, T2>(IDictionary<T1, T2> dictionary, T1 key, Func<T1, T2> value)
-        {
-            dictionary.Add(key, (T2)value(key));
-        }
+       
 
         /// <summary>
         /// On create method
