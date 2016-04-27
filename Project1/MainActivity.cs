@@ -15,7 +15,7 @@ namespace DisertationProject
     /// <summary>
     /// Main activity
     /// </summary>
-    [Activity(Label = Globals.ProjectLabel, MainLauncher = true, Icon = Globals.ProjectIcon)]
+    [Activity(Label = Globals.ProjectLabel, MainLauncher = true, Icon = "@drawable/ic_launcher")]
     public class MainActivity : Activity
     {
         /// <summary>
@@ -29,6 +29,8 @@ namespace DisertationProject
         /// </summary>
         private void Initialize()
         {
+
+            Buttons = new Dictionary<int, Button>();
 
             //Create the dictionaries
             addItemToDictionary<int, Button>(Buttons, Globals.PlayButtonId, FindViewById<Button>);

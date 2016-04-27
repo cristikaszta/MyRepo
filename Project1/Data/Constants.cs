@@ -28,7 +28,7 @@ namespace DisertationProject.Data
         public const string ActionStop = "com.xamarin.action.STOP";
         public const string SampleSong = @"http://www.montemagno.com/sample.mp3";
         public const string ProjectLabel = "DisertationProject";
-        public const string ProjectIcon = "@string/launcherIcon";
+
     }
 
 
