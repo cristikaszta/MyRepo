@@ -16,21 +16,21 @@
             android:id="@+id/playButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableTop="@string/playIcon"
+            android:drawableTop="@drawable/ic_av_play"
             android:layout_gravity="center_vertical" />
         <Button
             android:text="@string/pauseText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/pauseButton"
-            android:drawableTop="@string/pauseIcon"
+            android:drawableTop="@drawable/ic_av_pause"
             android:layout_gravity="center_vertical" />
         <Button
             android:text="@string/stopText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/stopButton"
-            android:drawableTop="@string/stopIcon"
+            android:drawableTop="@drawable/ic_av_stop"
             android:layout_gravity="center_vertical" />
     </LinearLayout>
 </LinearLayout>

@@ -7,7 +7,7 @@ using Android.OS;
 using DisertationProject.Data;
 using System;
 
-namespace DisertationProject.Services.StreamingService
+namespace DisertationProject.Controller
 {
     /// <summary>
     /// Streaming background service
