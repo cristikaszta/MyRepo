@@ -23,7 +23,7 @@ namespace Project1.Data.Models
 
             public string ArtistName { get; set; }
 
-            public byte Data { get; set; }
+            public byte DataInformation { get; set; }
 
             public override string ToString()
             {
