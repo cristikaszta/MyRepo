@@ -10,18 +10,14 @@ using System;
 namespace DisertationProject.Controller
 {
     /// <summary>
-    /// Streaming background service
+    /// Music player controller
     /// </summary>
-    [Service]
-    [IntentFilter(new[] { Globals.ActionPlay, Globals.ActionPause, Globals.ActionStop })]
-    public class StreamingBackgroundService : Service, AudioManager.IOnAudioFocusChangeListener
+    //[Service]
+    //[IntentFilter(new[] { Globals.ActionPlay, Globals.ActionPause, Globals.ActionStop })]
+    public class MusicPlayerController : Service, AudioManager.IOnAudioFocusChangeListener
     {
-        private WiFiController _wifi;
-        private MusicPlayerController _musicPlayer;
-        private MediaPlayer mediaPlayer;
-        private AudioManager audioManager;
-        //private WifiManager wifiManager;
-        //private WifiManager.WifiLock wifiLock;
+        public MediaPlayer mediaPlayer;
+        public AudioManager audioManager;
         private bool isPaused;
         private const int notificationId = 1;
 
@@ -31,11 +27,9 @@ namespace DisertationProject.Controller
         public override void OnCreate()
         {
             base.OnCreate();
-            _wifi = new WiFiController();
-            _musicPlayer = new MusicPlayerController();
             //Find our audio and notificaton managers
-            _musicPlayer.audioManager = (AudioManager)GetSystemService(AudioService);
-            _wifi.wifiManager = (WifiManager)GetSystemService(WifiService);
+            audioManager = (AudioManager)GetSystemService(AudioService);
+            //wifiManager = (WifiManager)GetSystemService(WifiService);
         }
 
         /// <summary>
@@ -46,24 +40,24 @@ namespace DisertationProject.Controller
         /// <returns></returns>
         public override IBinder OnBind(Intent intent) { return null; }
 
-        /// <summary>
-        /// On start command
-        /// </summary>
-        /// <param name="intent">The intent</param>
-        /// <param name="flags">The start command flags</param>
-        /// <param name="startId">Start id</param>
-        /// <returns>Start command result</returns>
-        public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
-        {
-            switch (intent.Action)
-            {
-                case Globals.ActionPlay: _musicPlayer.Play(); break;
-                case Globals.ActionStop: _musicPlayer.Stop(); break;
-                case Globals.ActionPause: _musicPlayer.Pause(); break;
-            }
-            //Set sticky as we are a long running operation
-            return StartCommandResult.Sticky;
-        }
+        ///// <summary>
+        ///// On start command
+        ///// </summary>
+        ///// <param name="intent">The intent</param>
+        ///// <param name="flags">The start command flags</param>
+        ///// <param name="startId">Start id</param>
+        ///// <returns>Start command result</returns>
+        //public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
+        //{
+        //    switch (intent.Action)
+        //    {
+        //        case Globals.ActionPlay: Play(); break;
+        //        case Globals.ActionStop: Stop(); break;
+        //        case Globals.ActionPause: Pause(); break;
+        //    }
+        //    //Set sticky as we are a long running operation
+        //    return StartCommandResult.Sticky;
+        //}
 
         /// <summary>
         /// Initialize player
@@ -95,7 +89,7 @@ namespace DisertationProject.Controller
         /// <summary>
         /// Play song method
         /// </summary>
-        private async void Play()
+        public async void Play()
         {
             if (isPaused && mediaPlayer != null)
             {
@@ -119,7 +113,7 @@ namespace DisertationProject.Controller
                     Console.WriteLine("Could not get audio focus");
                 }
                 mediaPlayer.PrepareAsync();
-                _wifi.AquireWifiLock();
+                AquireWifiLock();
                 StartForeground();
             }
             catch (Exception ex)
@@ -153,7 +147,7 @@ namespace DisertationProject.Controller
         /// <summary>
         /// Pause song method
         /// </summary>
-        private void Pause()
+        public void Pause()
         {
             if (mediaPlayer == null)
                 return;
@@ -166,7 +160,7 @@ namespace DisertationProject.Controller
         /// <summary>
         /// Stop song method
         /// </summary>
-        private void Stop()
+        public void Stop()
         {
             if (mediaPlayer == null)
                 return;

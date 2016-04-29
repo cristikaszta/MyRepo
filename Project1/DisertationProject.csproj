@@ -50,7 +50,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controller\CommonController.cs" />
+    <Compile Include="Controller\MusicPlayerController.cs" />
     <Compile Include="Controller\StreamingBackgroundService.cs" />
+    <Compile Include="Controller\WiFiController.cs" />
     <Compile Include="Model\PlayLists.cs" />
     <Compile Include="Model\PlayListsSongs.cs" />
     <Compile Include="Model\Songs.cs" />
