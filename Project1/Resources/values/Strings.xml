@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="ApplicationName">BackgroundStreamingAudio</string>
+  <string name="previousText">Prev</string>
   <string name="playText">Play</string>
   <string name="pauseText">Pause</string>
   <string name="stopText">Stop</string>
+  <string name="nextText">Next</string>
   <string name="mp3_url">Enter mp3 url</string>
 </resources>

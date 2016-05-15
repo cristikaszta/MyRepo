@@ -1,35 +1,30 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-
 namespace DisertationProject.Data
 {
     /// <summary>
-    /// Ids 
+    /// GLobals
     /// </summary>
     public class Globals
     {
-        //Integers
+        //Ids
         public const int PlayButtonId = Resource.Id.playButton;
+
         public const int PauseButtonId = Resource.Id.pauseButton;
         public const int StopButtonId = Resource.Id.stopButton;
         public const int MainLayoutId = Resource.Layout.Main;
 
-        //Strings
+        //Actions
         public const string ActionPlay = "com.xamarin.action.PLAY";
+
         public const string ActionPause = "com.xamarin.action.PAUSE";
         public const string ActionStop = "com.xamarin.action.STOP";
-        public const string SampleSong = @"http://www.montemagno.com/sample.mp3";
+
+        //Labels
         public const string ProjectLabel = "DisertationProject";
 
+        //Sample congs
+        public const string SampleSong1 = @"http://www.montemagno.com/sample.mp3";
+
+        public const string SampleSong2 = @"http://www.tonycuffe.com/mp3/tail%20toddle.mp3";
+        public const string SampleSong3 = @"http://www.tonycuffe.com/mp3/saewill_lo.mp3";
     }
-
-
 }

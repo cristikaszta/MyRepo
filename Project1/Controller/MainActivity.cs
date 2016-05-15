@@ -1,13 +1,9 @@
-﻿using System;
-using Android.App;
+﻿using Android.App;
 using Android.Content;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Android.OS;
-using System.Collections.Generic;
+using Android.Widget;
 using DisertationProject.Data;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace DisertationProject.Controller
 {
@@ -17,6 +13,21 @@ namespace DisertationProject.Controller
     [Activity(Label = Globals.ProjectLabel, MainLauncher = true, Icon = "@drawable/ic_launcher")]
     public class MainActivity : Activity
     {
+        /// <summary>
+        /// Main activity context
+        /// </summary>
+        public static Context Context;
+
+        /// <summary>
+        /// Main activity context Audio service
+        /// </summary>
+        public static string Audio;
+
+        /// <summary>
+        /// Main activity context Wifi service
+        /// </summary>
+        public static string Wifi;
+
         /// <summary>
         /// Dictionary of the buttons;
         /// Each item contains a key and a value
@@ -33,6 +44,9 @@ namespace DisertationProject.Controller
         /// </summary>
         private void Initialize()
         {
+            Context = ApplicationContext;
+            Wifi = WifiService;
+            Audio = AudioService;
             _common = new CommonController();
             _buttons = new Dictionary<int, Button>();
 
@@ -47,8 +61,6 @@ namespace DisertationProject.Controller
             _buttons[Globals.StopButtonId].Click += (sender, args) => SendAudioCommand(Globals.ActionStop);
         }
 
-       
-
         /// <summary>
         /// On create method
         /// </summary>
@@ -62,9 +74,7 @@ namespace DisertationProject.Controller
 
             //Initialize the attributes
             Initialize();
-
         }
-
 
         /// <summary>
         /// Set audio command method
@@ -72,10 +82,8 @@ namespace DisertationProject.Controller
         /// <param name="action">The action</param>
         private void SendAudioCommand(string action)
         {
-            var intent = new Intent(action);
-            StartService(intent);
+            var _intent = new Intent(action);
+            StartService(_intent);
         }
     }
 }
-
-

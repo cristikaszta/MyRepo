@@ -115,14 +115,20 @@ namespace DisertationProject
 			// aapt resource value: 0x7f070000
 			public const int linearLayout1 = 2131165184;
 			
-			// aapt resource value: 0x7f070002
-			public const int pauseButton = 2131165186;
-			
-			// aapt resource value: 0x7f070001
-			public const int playButton = 2131165185;
+			// aapt resource value: 0x7f070005
+			public const int nextButton = 2131165189;
 			
 			// aapt resource value: 0x7f070003
-			public const int stopButton = 2131165187;
+			public const int pauseButton = 2131165187;
+			
+			// aapt resource value: 0x7f070002
+			public const int playButton = 2131165186;
+			
+			// aapt resource value: 0x7f070001
+			public const int previousButton = 2131165185;
+			
+			// aapt resource value: 0x7f070004
+			public const int stopButton = 2131165188;
 			
 			static Id()
 			{
@@ -156,17 +162,23 @@ namespace DisertationProject
 			// aapt resource value: 0x7f050000
 			public const int ApplicationName = 2131034112;
 			
-			// aapt resource value: 0x7f050004
-			public const int mp3_url = 2131034116;
+			// aapt resource value: 0x7f050006
+			public const int mp3_url = 2131034118;
 			
-			// aapt resource value: 0x7f050002
-			public const int pauseText = 2131034114;
-			
-			// aapt resource value: 0x7f050001
-			public const int playText = 2131034113;
+			// aapt resource value: 0x7f050005
+			public const int nextText = 2131034117;
 			
 			// aapt resource value: 0x7f050003
-			public const int stopText = 2131034115;
+			public const int pauseText = 2131034115;
+			
+			// aapt resource value: 0x7f050002
+			public const int playText = 2131034114;
+			
+			// aapt resource value: 0x7f050001
+			public const int previousText = 2131034113;
+			
+			// aapt resource value: 0x7f050004
+			public const int stopText = 2131034116;
 			
 			static String()
 			{

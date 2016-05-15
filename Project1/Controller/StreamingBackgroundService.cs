@@ -1,11 +1,9 @@
 using Android.App;
 using Android.Content;
 using Android.Media;
-using Android.Net;
-using Android.Net.Wifi;
 using Android.OS;
 using DisertationProject.Data;
-using System;
+using System.Collections.Generic;
 
 namespace DisertationProject.Controller
 {
@@ -14,15 +12,23 @@ namespace DisertationProject.Controller
     /// </summary>
     [Service]
     [IntentFilter(new[] { Globals.ActionPlay, Globals.ActionPause, Globals.ActionStop })]
-    public class StreamingBackgroundService : Service, AudioManager.IOnAudioFocusChangeListener
+    public class StreamingBackgroundService : Service
     {
+        public List<string> songList;
+
+        /// <summary>
+        /// Wifi controller
+        /// </summary>
         private WiFiController _wifi;
+
+        /// <summary>
+        /// Music player contorller
+        /// </summary>
         private MusicPlayerController _musicPlayer;
-        private MediaPlayer mediaPlayer;
-        private AudioManager audioManager;
-        //private WifiManager wifiManager;
-        //private WifiManager.WifiLock wifiLock;
-        private bool isPaused;
+
+        /// <summary>
+        /// Notification Id
+        /// </summary>
         private const int notificationId = 1;
 
         /// <summary>
@@ -33,9 +39,11 @@ namespace DisertationProject.Controller
             base.OnCreate();
             _wifi = new WiFiController();
             _musicPlayer = new MusicPlayerController();
-            //Find our audio and notificaton managers
-            _musicPlayer.audioManager = (AudioManager)GetSystemService(AudioService);
-            _wifi.wifiManager = (WifiManager)GetSystemService(WifiService);
+
+            songList = new List<string>();
+            songList.Add(Globals.SampleSong1);
+            songList.Add(Globals.SampleSong2);
+            songList.Add(Globals.SampleSong3);
         }
 
         /// <summary>
@@ -57,75 +65,58 @@ namespace DisertationProject.Controller
         {
             switch (intent.Action)
             {
-                case Globals.ActionPlay: _musicPlayer.Play(); break;
-                case Globals.ActionStop: _musicPlayer.Stop(); break;
-                case Globals.ActionPause: _musicPlayer.Pause(); break;
+                case Globals.ActionPlay: Play(Globals.SampleSong1); break;
+                case Globals.ActionStop: Stop(); break;
+                case Globals.ActionPause: Pause(); break;
             }
             //Set sticky as we are a long running operation
             return StartCommandResult.Sticky;
         }
 
         /// <summary>
-        /// Initialize player
+        /// Play song method
+        /// <param name="songUrl">The song URL string</param>
         /// </summary>
-        private void IntializePlayer()
+        private void Play(string songUrl)
         {
-            mediaPlayer = new MediaPlayer();
-
-            //Tell our player to stream music
-            mediaPlayer.SetAudioStreamType(Stream.Music);
-
-            //Wake mode will be partial to keep the CPU still running under lock screen
-            mediaPlayer.SetWakeMode(ApplicationContext, WakeLockFlags.Partial);
-
-            //When we have prepared the song start playback
-            mediaPlayer.Prepared += (sender, args) => mediaPlayer.Start();
-
-            //When we have reached the end of the song stop ourselves, however you could signal next track here.
-            mediaPlayer.Completion += (sender, args) => Stop();
-
-            mediaPlayer.Error += (sender, args) =>
+            if (!_musicPlayer.MediaPlayer.IsPlaying)
             {
-                //playback error
-                Console.WriteLine("Error in playback resetting: " + args.What);
-                Stop();//this will clean up and reset properly.
-            };
+                _musicPlayer.Play(songUrl);
+                StartForeground();
+                _wifi.AquireWifiLock();
+            }
         }
 
         /// <summary>
-        /// Play song method
+        /// Pause action method
         /// </summary>
-        private async void Play()
+        private void Pause()
         {
-            if (isPaused && mediaPlayer != null)
-            {
-                isPaused = false;
-                //We are simply paused so just start again
-                mediaPlayer.Start();
-                StartForeground();
-                return;
-            }
+            _musicPlayer.Pause();
+            StopForeground(true);
+        }
 
-            if (mediaPlayer == null) { IntializePlayer(); }
-            if (mediaPlayer.IsPlaying) return;
+        /// <summary>
+        /// Stop action method
+        /// </summary>
+        private void Stop()
+        {
+            _musicPlayer.Stop();
+            StopForeground(true);
+            _wifi.ReleaseWifiLock();
+        }
 
-            try
+        /// <summary>
+        /// Properly cleanup of your player by releasing resources
+        /// </summary>
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            if (_musicPlayer != null)
             {
-                await mediaPlayer.SetDataSourceAsync(ApplicationContext, Android.Net.Uri.Parse(Globals.SampleSong));
-                var focusResult = audioManager.RequestAudioFocus(this, Stream.Music, AudioFocus.Gain);
-                if (focusResult != AudioFocusRequest.Granted)
-                {
-                    //could not get audio focus
-                    Console.WriteLine("Could not get audio focus");
-                }
-                mediaPlayer.PrepareAsync();
-                _wifi.AquireWifiLock();
-                StartForeground();
-            }
-            catch (Exception ex)
-            {
-                //unable to start playback log error
-                Console.WriteLine("Unable to start playback: " + ex);
+                _musicPlayer.MediaPlayer.Release();
+                _musicPlayer = null;
             }
         }
 
@@ -136,7 +127,7 @@ namespace DisertationProject.Controller
         /// </summary>
         private void StartForeground()
         {
-            var pendingIntent = PendingIntent.GetActivity(ApplicationContext, 0, new Intent(ApplicationContext, typeof(MainActivity)), PendingIntentFlags.UpdateCurrent);
+            var pendingIntent = PendingIntent.GetActivity(MainActivity.Context, 0, new Intent(MainActivity.Context, typeof(MainActivity)), PendingIntentFlags.UpdateCurrent);
             var notification = new Notification
             {
                 TickerText = new Java.Lang.String("Song started!"),
@@ -145,106 +136,22 @@ namespace DisertationProject.Controller
 
             notification.Flags |= NotificationFlags.OngoingEvent;
 #pragma warning disable CS0618 // Type or member is obsolete
-            notification.SetLatestEventInfo(ApplicationContext, "Xamarin Streaming", "Playing music!", pendingIntent);
+            notification.SetLatestEventInfo(MainActivity.Context, "Xamarin Streaming", "Playing music!", pendingIntent);
 #pragma warning restore CS0618 // Type or member is obsolete
             StartForeground(notificationId, notification);
         }
 
-        /// <summary>
-        /// Pause song method
-        /// </summary>
-        private void Pause()
+        [BroadcastReceiver]
+        [IntentFilter(new[] { AudioManager.ActionAudioBecomingNoisy })]
+        public class MusicBroadcastReceiver : BroadcastReceiver
         {
-            if (mediaPlayer == null)
-                return;
-            if (mediaPlayer.IsPlaying)
-                mediaPlayer.Pause();
-            StopForeground(true);
-            isPaused = true;
-        }
-
-        /// <summary>
-        /// Stop song method
-        /// </summary>
-        private void Stop()
-        {
-            if (mediaPlayer == null)
-                return;
-            if (mediaPlayer.IsPlaying)
-                mediaPlayer.Stop();
-            mediaPlayer.Reset();
-            isPaused = false;
-            StopForeground(true);
-            _wifi.ReleaseWifiLock();
-        }
-
-        ///// <summary>
-        ///// Lock the wifi so we can still stream under lock screen
-        ///// </summary>
-        //private void AquireWifiLock()
-        //{
-        //    if (wifiLock == null) { wifiLock = wifiManager.CreateWifiLock(WifiMode.Full, "xamarin_wifi_lock"); }
-        //    wifiLock.Acquire();
-        //}
-
-        ///// <summary>
-        ///// This will release the wifi lock if it is no longer needed
-        ///// </summary>
-        //private void ReleaseWifiLock()
-        //{
-        //    if (wifiLock == null)
-        //        return;
-
-        //    wifiLock.Release();
-        //    wifiLock = null;
-        //}
-
-        /// <summary>
-        /// Properly cleanup of your player by releasing resources
-        /// </summary>
-        public override void OnDestroy()
-        {
-            base.OnDestroy();
-            if (mediaPlayer != null)
+            public override void OnReceive(Context context, Intent intent)
             {
-                mediaPlayer.Release();
-                mediaPlayer = null;
-            }
-        }
-
-        /// <summary>
-        /// For a good user experience we should account for when audio focus has changed.
-        /// There is only 1 audio output there may be several media services trying to use it so
-        /// we should act correctly based on this.  "duck" to be quiet and when we gain go full.
-        /// All applications are encouraged to follow this, but are not enforced.
-        /// </summary>
-        /// <param name="focusChange"></param>
-        public void OnAudioFocusChange(AudioFocus focusChange)
-        {
-            switch (focusChange)
-            {
-                case AudioFocus.Gain:
-                    if (mediaPlayer == null) IntializePlayer();
-
-                    if (!mediaPlayer.IsPlaying)
-                    {
-                        mediaPlayer.Start();
-                        isPaused = false;
-                    }
-
-                    mediaPlayer.SetVolume(1.0f, 1.0f);//Turn it up!
-                    break;
-
-                case AudioFocus.Loss:
-                    //We have lost focus stop!
-                    Stop(); break;
-                case AudioFocus.LossTransient:
-                    //We have lost focus for a short time, but likely to resume so pause
-                    Pause(); break;
-                case AudioFocus.LossTransientCanDuck:
-                    //We have lost focus but should till play at a muted 10% volume
-                    if (mediaPlayer.IsPlaying) mediaPlayer.SetVolume(.1f, .1f);//turn it down!
-                    break;
+                if (intent.Action != AudioManager.ActionAudioBecomingNoisy)
+                    return;
+                //signal the service to stop!
+                var stopIntent = new Intent(Globals.ActionStop);
+                context.StartService(stopIntent);
             }
         }
     }
