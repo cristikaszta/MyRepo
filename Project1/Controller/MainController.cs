@@ -11,7 +11,7 @@ namespace DisertationProject.Controller
     /// Main activity
     /// </summary>
     [Activity(Label = Globals.ProjectLabel, MainLauncher = true, Icon = "@drawable/ic_launcher")]
-    public class MainActivity : Activity
+    public class MainController : Activity
     {
         /// <summary>
         /// Main activity context
@@ -40,28 +40,6 @@ namespace DisertationProject.Controller
         private CommonController _common;
 
         /// <summary>
-        /// Object initialization method
-        /// </summary>
-        private void Initialize()
-        {
-            Context = ApplicationContext;
-            Wifi = WifiService;
-            Audio = AudioService;
-            _common = new CommonController();
-            _buttons = new Dictionary<int, Button>();
-
-            //Create the dictionaries
-            _common.addItemToDictionary<int, Button>(_buttons, Globals.PlayButtonId, FindViewById<Button>);
-            _common.addItemToDictionary<int, Button>(_buttons, Globals.PauseButtonId, FindViewById<Button>);
-            _common.addItemToDictionary<int, Button>(_buttons, Globals.StopButtonId, FindViewById<Button>);
-
-            //Set click action
-            _buttons[Globals.PlayButtonId].Click += (sender, args) => SendAudioCommand(Globals.ActionPlay);
-            _buttons[Globals.PauseButtonId].Click += (sender, args) => SendAudioCommand(Globals.ActionPause);
-            _buttons[Globals.StopButtonId].Click += (sender, args) => SendAudioCommand(Globals.ActionStop);
-        }
-
-        /// <summary>
         /// On create method
         /// </summary>
         /// <param name="bundle">The bundle</param>
@@ -77,10 +55,51 @@ namespace DisertationProject.Controller
         }
 
         /// <summary>
-        /// Set audio command method
+        /// Object initialization method
+        /// </summary>
+        private void Initialize()
+        {
+            Context = ApplicationContext;
+            Wifi = WifiService;
+            Audio = AudioService;
+            _common = new CommonController();
+            _buttons = new Dictionary<int, Button>();
+            SetupButtons();
+        }
+
+        /// <summary>
+        /// Setup buttons method
+        /// </summary>
+        private void SetupButtons()
+        {
+            //Create the dictionaries
+            _common.addItemToDictionary<int, Button>(_buttons, Globals.PlayButtonId, FindViewById<Button>);
+            _common.addItemToDictionary<int, Button>(_buttons, Globals.PauseButtonId, FindViewById<Button>);
+            _common.addItemToDictionary<int, Button>(_buttons, Globals.StopButtonId, FindViewById<Button>);
+            _common.addItemToDictionary<int, Button>(_buttons, Globals.PreviousButtonId, FindViewById<Button>);
+            _common.addItemToDictionary<int, Button>(_buttons, Globals.NextButtonId, FindViewById<Button>);
+            _common.addItemToDictionary<int, Button>(_buttons, Globals.RepeatButtonId, FindViewById<ToggleButton>);
+
+            //Set click action
+            _buttons[Globals.PlayButtonId].Click += (sender, args) => SendCommand(Globals.ActionPlay);
+            _buttons[Globals.PauseButtonId].Click += (sender, args) => SendCommand(Globals.ActionPause);
+            _buttons[Globals.StopButtonId].Click += (sender, args) => SendCommand(Globals.ActionStop);
+            _buttons[Globals.PreviousButtonId].Click += (sender, args) => SendCommand(Globals.ActionPrevious);
+            _buttons[Globals.NextButtonId].Click += (sender, args) => SendCommand(Globals.ActionNext);
+            _buttons[Globals.RepeatButtonId].Click += (sender, args) =>
+            {
+                if (((ToggleButton)_buttons[Globals.RepeatButtonId]).Checked)
+                    SendCommand(Globals.ActionRepeatOn);
+                else
+                    SendCommand(Globals.ActionRepeatOff);
+            };
+        }
+
+        /// <summary>
+        /// Set command method
         /// </summary>
         /// <param name="action">The action</param>
-        private void SendAudioCommand(string action)
+        private void SendCommand(string action)
         {
             var _intent = new Intent(action);
             StartService(_intent);

@@ -6,5 +6,8 @@
   <string name="pauseText">Pause</string>
   <string name="stopText">Stop</string>
   <string name="nextText">Next</string>
+  <string name="suffleText">Suffle</string>
+  <string name="repeatOnText">Repeat On</string>
+  <string name="repeatOffText">Repeat Off</string>
   <string name="mp3_url">Enter mp3 url</string>
 </resources>

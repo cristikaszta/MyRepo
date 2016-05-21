@@ -26,7 +26,7 @@ namespace DisertationProject.Controller
         /// </summary>
         public WiFiController()
         {
-            wifiManager = (WifiManager)MainActivity.Context.GetSystemService(MainActivity.Wifi);
+            wifiManager = (WifiManager)MainController.Context.GetSystemService(MainController.Wifi);
             wifiLock = wifiManager.CreateWifiLock(WifiMode.Full, "xamarin_wifi_lock");
         }
 

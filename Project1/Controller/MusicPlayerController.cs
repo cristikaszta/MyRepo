@@ -21,7 +21,7 @@ namespace DisertationProject.Controller
         public MusicPlayerController()
         {
             MediaPlayer = new MediaPlayer();
-            _audioManager = (AudioManager)MainActivity.Context.GetSystemService(MainActivity.Audio);
+            _audioManager = (AudioManager)MainController.Context.GetSystemService(MainController.Audio);
             InitializePlayer();
         }
 
@@ -44,7 +44,7 @@ namespace DisertationProject.Controller
             MediaPlayer.SetAudioStreamType(Stream.Music);
 
             //Wake mode will be partial to keep the CPU still running under lock screen
-            MediaPlayer.SetWakeMode(MainActivity.Context, WakeLockFlags.Partial);
+            MediaPlayer.SetWakeMode(MainController.Context, WakeLockFlags.Partial);
 
             //When we have prepared the song start playback
             MediaPlayer.Prepared += (sender, args) => MediaPlayer.Start();
@@ -79,7 +79,7 @@ namespace DisertationProject.Controller
 
             try
             {
-                await MediaPlayer.SetDataSourceAsync(MainActivity.Context, Android.Net.Uri.Parse(songUrl));
+                await MediaPlayer.SetDataSourceAsync(MainController.Context, Android.Net.Uri.Parse(songUrl));
                 var focusResult = _audioManager.RequestAudioFocus(this, Stream.Music, AudioFocus.Gain);
                 if (focusResult != AudioFocusRequest.Granted)
                 {

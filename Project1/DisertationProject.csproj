@@ -16,7 +16,7 @@
     <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AndroidUseLatestPlatformSdk>False</AndroidUseLatestPlatformSdk>
-    <TargetFrameworkVersion>v4.4</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -51,13 +51,14 @@
   <ItemGroup>
     <Compile Include="Controller\CommonController.cs" />
     <Compile Include="Controller\MusicPlayerController.cs" />
-    <Compile Include="Controller\StreamingBackgroundService.cs" />
+    <Compile Include="Controller\MusicServiceController.cs" />
     <Compile Include="Controller\WiFiController.cs" />
+    <Compile Include="Model\Playlist.cs" />
     <Compile Include="Model\PlayLists.cs" />
     <Compile Include="Model\PlayListsSongs.cs" />
     <Compile Include="Model\Songs.cs" />
     <Compile Include="Model\Constants.cs" />
-    <Compile Include="Controller\MainActivity.cs" />
+    <Compile Include="Controller\MainController.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SQLite.cs" />
@@ -241,6 +242,15 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-xxhdpi-v11\ic_stat_av_play_over_video.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_av_do_not_repeat.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_av_do_not_shuffle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\toggle_selector.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
