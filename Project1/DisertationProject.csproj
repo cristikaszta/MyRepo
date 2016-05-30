@@ -52,9 +52,8 @@
     <Compile Include="Controller\CommonController.cs" />
     <Compile Include="Controller\MusicPlayerController.cs" />
     <Compile Include="Controller\MusicServiceController.cs" />
-    <Compile Include="Controller\WiFiController.cs" />
+    <Compile Include="Controller\NetworkController.cs" />
     <Compile Include="Model\Playlist.cs" />
-    <Compile Include="Model\PlayLists.cs" />
     <Compile Include="Model\PlayListsSongs.cs" />
     <Compile Include="Model\Songs.cs" />
     <Compile Include="Model\Constants.cs" />
@@ -250,7 +249,7 @@
     <AndroidResource Include="Resources\drawable-hdpi\ic_av_do_not_shuffle.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\toggle_selector.xml" />
+    <AndroidResource Include="Resources\drawable\repeatToggleSelector.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

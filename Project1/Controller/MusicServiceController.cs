@@ -5,12 +5,13 @@ using Android.OS;
 using DisertationProject.Data;
 using DisertationProject.Data.Models;
 using DisertationProject.Model;
+using System;
 using System.Collections.Generic;
 
 namespace DisertationProject.Controller
 {
     /// <summary>
-    /// Streaming background service
+    /// Music service controller
     /// </summary>
     [Service]
     [IntentFilter(new[] { Globals.ActionPlay, Globals.ActionPause, Globals.ActionStop, Globals.ActionPrevious, Globals.ActionNext,
@@ -20,12 +21,12 @@ namespace DisertationProject.Controller
         /// <summary>
         /// Song list
         /// </summary>
-        public Playlist playlist;
+        public Playlist Playlist;
 
         /// <summary>
-        /// Wifi controller
+        /// Network controller
         /// </summary>
-        private WiFiController _wifi;
+        private NetworkController _networkController;
 
         /// <summary>
         /// Music player contorller
@@ -51,10 +52,27 @@ namespace DisertationProject.Controller
         public override void OnCreate()
         {
             base.OnCreate();
-            _wifi = new WiFiController();
-            _musicPlayer = new MusicPlayerController();
-            playlist = new Playlist();
+            Initialize();
             SetupPlaylist();
+        }
+
+        /// <summary>
+        /// Initialize
+        /// </summary>
+        private void Initialize()
+        {
+            Playlist = new Playlist();
+            _networkController = new NetworkController();
+            _musicPlayer = new MusicPlayerController();
+
+            //Make the music player play the next song automatically
+            _musicPlayer.MediaPlayer.Completion += (sender, args) => Next();
+            //When we have error in the media player
+            _musicPlayer.MediaPlayer.Error += (sender, args) =>
+            {
+                StartForeground("Error in media player", "");
+                Stop();
+            };
         }
 
         /// <summary>
@@ -62,8 +80,8 @@ namespace DisertationProject.Controller
         /// </summary>
         private void SetupPlaylist()
         {
-            playlist.Add(new List<Song>{
-                new Song{Source = Globals.SampleSong2, SongName = "Song 1"}, 
+            Playlist.Add(new List<Song>{
+                new Song{Source = Globals.SampleSong2, SongName = "Song 1"},
                 new Song{Source = Globals.SampleSong3, SongName = "Song 2"},
                 new Song{Source = Globals.SampleSong4, SongName = "Song 3"},
                 new Song{Source = Globals.SampleSong5, SongName = "Song 4"},
@@ -73,7 +91,6 @@ namespace DisertationProject.Controller
                 new Song{Source = Globals.SampleSong9, SongName = "Song 8"}
             });
         }
-
 
         /// <summary>
         /// On start command
@@ -104,11 +121,29 @@ namespace DisertationProject.Controller
         /// </summary>
         private void Play()
         {
-            if (!_musicPlayer.MediaPlayer.IsPlaying)
+            if (_networkController.IsOnline())
             {
-                _musicPlayer.Play(playlist.GetCurrentItem().Source);
-                StartForeground(playlist.GetCurrentItem().SongName);
-                _wifi.AquireWifiLock();
+                try
+                {
+                    _musicPlayer.Play(Playlist.GetCurrentItem().Source);
+                    StartForeground("Playing ", Playlist.GetCurrentItem().SongName);
+                    _networkController.AquireWifiLock();
+                }
+                catch (Java.Lang.IllegalStateException)
+                {
+                    StartForeground("Illegal state exception", "");
+                    Stop();
+                }
+                catch (Exception)
+                {
+                    StartForeground("General exception", "");
+                    Stop();
+                }
+            }
+            else
+            {
+                Stop();
+                StartForeground("Check internet connection", "");
             }
         }
 
@@ -128,7 +163,7 @@ namespace DisertationProject.Controller
         {
             _musicPlayer.Stop();
             StopForeground(true);
-            _wifi.ReleaseWifiLock();
+            _networkController.ReleaseWifiLock();
         }
 
         /// <summary>
@@ -137,14 +172,14 @@ namespace DisertationProject.Controller
         private void Previous()
         {
             Stop();
-            if (!playlist.IsAtBeggining())
+            if (!Playlist.IsAtBeggining())
             {
-                playlist.DecrementPosition();
+                Playlist.DecrementPosition();
                 Play();
             }
-            else if (playlist.IsRepeatOn())
+            else if (Playlist.IsRepeatOn())
             {
-                playlist.SetPositionToEnd();
+                Playlist.SetPositionToEnd();
                 Play();
             }
         }
@@ -155,14 +190,14 @@ namespace DisertationProject.Controller
         public void Next()
         {
             Stop();
-            if (!playlist.IsAtEnd())
+            if (!Playlist.IsAtEnd())
             {
-                playlist.IncrementPosition();
+                Playlist.IncrementPosition();
                 Play();
             }
-            else if (playlist.IsRepeatOn())
+            else if (Playlist.IsRepeatOn())
             {
-                playlist.ResetPosition();
+                Playlist.ResetPosition();
                 Play();
             }
         }
@@ -172,7 +207,7 @@ namespace DisertationProject.Controller
         /// </summary>
         public void ToggleRepeatOn()
         {
-            playlist.SetRepeatOn();
+            Playlist.SetRepeatOn();
         }
 
         /// <summary>
@@ -180,7 +215,7 @@ namespace DisertationProject.Controller
         /// </summary>
         public void ToggleRepeatOff()
         {
-            playlist.SetRepeatOff();
+            Playlist.SetRepeatOff();
         }
 
         /// <summary>
@@ -189,7 +224,6 @@ namespace DisertationProject.Controller
         public override void OnDestroy()
         {
             base.OnDestroy();
-
             if (_musicPlayer != null)
             {
                 _musicPlayer.MediaPlayer.Release();
@@ -202,18 +236,18 @@ namespace DisertationProject.Controller
         /// When we start on the foreground we will present a notification to the user
         /// When they press the notification it will take them to the main page so they can control the music
         /// </summary>
-        private void StartForeground(string text)
+        private void StartForeground(string firstText, string secondText)
         {
             var pendingIntent = PendingIntent.GetActivity(MainController.Context, 0, new Intent(MainController.Context, typeof(MainController)), PendingIntentFlags.UpdateCurrent);
             var notification = new Notification
             {
-                TickerText = new Java.Lang.String("Playing "+text),
+                TickerText = new Java.Lang.String(firstText + secondText),
                 Icon = Resource.Drawable.ic_stat_av_play_over_video
             };
 
             notification.Flags |= NotificationFlags.OngoingEvent;
 #pragma warning disable CS0618 // Type or member is obsolete
-            notification.SetLatestEventInfo(MainController.Context, "Music Streaming", "Playing "+text, pendingIntent);
+            notification.SetLatestEventInfo(MainController.Context, "Music Streaming", firstText + secondText, pendingIntent);
 #pragma warning restore CS0618 // Type or member is obsolete
             StartForeground(notificationId, notification);
         }

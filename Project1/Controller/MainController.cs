@@ -29,6 +29,11 @@ namespace DisertationProject.Controller
         public static string Wifi;
 
         /// <summary>
+        /// The conectivity context
+        /// </summary>
+        public static string Connectivity;
+
+        /// <summary>
         /// Dictionary of the buttons;
         /// Each item contains a key and a value
         /// </summary>
@@ -59,9 +64,13 @@ namespace DisertationProject.Controller
         /// </summary>
         private void Initialize()
         {
+            //The context of the single, global Application object of the current process.
             Context = ApplicationContext;
+            //The android services
+            Connectivity = ConnectivityService;
             Wifi = WifiService;
             Audio = AudioService;
+
             _common = new CommonController();
             _buttons = new Dictionary<int, Button>();
             SetupButtons();

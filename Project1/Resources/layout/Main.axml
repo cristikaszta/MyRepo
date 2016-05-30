@@ -5,12 +5,26 @@
     android:layout_height="fill_parent"
     android:background="@color/background"
     android:padding="0dp">
-    <LinearLayout
+<!--<LinearLayout
+        android:id="@+id/linearLayout1"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:id="@+id/linearLayout1">
+        android:layout_gravity="center_horizontal">
+        <TextView
+            android:text="Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView1"
+            android:layout_marginBottom="188.5dp"
+            android:layout_marginRight="155.0dp" />
+    </LinearLayout>-->
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
         <Button
             android:id="@+id/playButton"
             android:text="@string/playText"
@@ -28,11 +42,11 @@
             style="@style/ButtonStyle" />
     </LinearLayout>
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:id="@+id/linearLayout2">
+        android:layout_gravity="center_horizontal">
         <Button
             android:id="@+id/previousButton"
             android:text="@string/previousText"
@@ -49,6 +63,19 @@
             android:textOn="@string/repeatOnText"
             style="@style/ButtonStyle"
             android:checked="false"
-            android:drawableTop="@drawable/toggle_selector" />
+            android:drawableTop="@drawable/repeatToggleSelector" />
     </LinearLayout>
+<!--<LinearLayout
+        android:id="@+id/linearLayout3"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+        <SeekBar
+            android:id="@+id/songPositionSeekBar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="0" />
+    </LinearLayout>-->
 </LinearLayout>

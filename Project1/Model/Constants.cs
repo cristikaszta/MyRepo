@@ -7,7 +7,6 @@ namespace DisertationProject.Data
     {
         //Ids
         public const int PlayButtonId = Resource.Id.playButton;
-
         public const int PauseButtonId = Resource.Id.pauseButton;
         public const int StopButtonId = Resource.Id.stopButton;
         public const int PreviousButtonId = Resource.Id.previousButton;
@@ -37,5 +36,8 @@ namespace DisertationProject.Data
         public const string SampleSong7 = @"http://www.tonycuffe.com/mp3/girlwho.mp3";
         public const string SampleSong8 = @"http://www.tonycuffe.com/mp3/cairnomount.mp3";
         public const string SampleSong9 = @"http://www.tonycuffe.com/mp3/pipers%20hut.mp3";
+
+        //Enumerations
+        public enum Emotions { Sad, Happy, Neutral, Angry }
     }
 }

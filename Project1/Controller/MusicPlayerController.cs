@@ -11,8 +11,19 @@ namespace DisertationProject.Controller
     /// </summary>
     public class MusicPlayerController : Service, AudioManager.IOnAudioFocusChangeListener
     {
+        /// <summary>
+        /// The media player
+        /// </summary>
         public MediaPlayer MediaPlayer;
+
+        /// <summary>
+        /// The audio manager
+        /// </summary>
         private AudioManager _audioManager;
+
+        /// <summary>
+        /// Is paused flag
+        /// </summary>
         private bool _isPaused;
 
         /// <summary>
@@ -22,7 +33,7 @@ namespace DisertationProject.Controller
         {
             MediaPlayer = new MediaPlayer();
             _audioManager = (AudioManager)MainController.Context.GetSystemService(MainController.Audio);
-            InitializePlayer();
+            InitializeMediaPlayer();
         }
 
         /// <summary>
@@ -36,7 +47,7 @@ namespace DisertationProject.Controller
         /// <summary>
         /// Initialize player
         /// </summary>
-        public void InitializePlayer()
+        public void InitializeMediaPlayer()
         {
             MediaPlayer = new MediaPlayer();
 
@@ -50,20 +61,19 @@ namespace DisertationProject.Controller
             MediaPlayer.Prepared += (sender, args) => MediaPlayer.Start();
 
             //When we have reached the end of the song stop ourselves, however you could signal next track here.
-            MediaPlayer.Completion += (sender, args) => Stop();
-
-            MediaPlayer.Error += (sender, args) =>
-            {
-                //playback error
-                Console.WriteLine("Error in playback resetting: " + args.What);
-                Stop();//this will clean up and reset properly.
-            };
+            //MediaPlayer.Completion += (sender, args) => Stop();
+            //MediaPlayer.Error += (sender, args) =>
+            //{
+            //    //playback error
+            //    Console.WriteLine("Error in playback resetting: " + args.What);
+            //    Stop();//this will clean up and reset properly.
+            //};
         }
 
         /// <summary>
         /// Play song method
         /// </summary>
-        public async void Play(string songUrl)
+        public async void Play(string songUrl) 
         {
             if (_isPaused)// && mediaPlayer != null)
             {
@@ -84,16 +94,22 @@ namespace DisertationProject.Controller
                 if (focusResult != AudioFocusRequest.Granted)
                 {
                     //could not get audio focus
-                    Console.WriteLine("Could not get audio focus");
+                    //Console.WriteLine("Could not get audio focus");
+                    throw new Exception();
                 }
                 MediaPlayer.PrepareAsync();
                 //AquireWifiLock();
                 //StartForeground();
             }
-            catch (Exception ex)
+            catch(Java.Lang.IllegalStateException)
             {
-                //unable to start playback log error
-                Console.WriteLine("Unable to start playback: " + ex);
+                //If the media player is called in an invalid state
+                throw new Java.Lang.IllegalStateException();
+            }
+            catch (Exception)
+            {
+                //General exception
+                throw new Exception();
             }
         }
 
@@ -172,5 +188,42 @@ namespace DisertationProject.Controller
                     break;
             }
         }
+
+        /// <summary>
+        /// Get the duration of the current song
+        /// </summary>
+        /// <returns>The duration of the current playing song</returns>
+        public int GetSongDuration()
+        {
+            var duration = 0;
+            try
+            {
+                duration = MediaPlayer.Duration;
+            }
+            catch(Exception)
+            {
+                throw new Exception();
+            };
+            return duration;
+        }
+
+        /// <summary>
+        /// Get the position of the current song playing
+        /// </summary>
+        /// <returns>The position of the current playing song</returns>
+        public int GetCurrentPosition()
+        {
+            var position = 0;
+            try
+            {
+                position = MediaPlayer.CurrentPosition;
+            }
+            catch (Exception)
+            {
+                throw new Exception();
+            };
+            return position;
+        }
+
     }
 }

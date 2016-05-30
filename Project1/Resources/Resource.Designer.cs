@@ -106,7 +106,7 @@ namespace DisertationProject
 			public const int Icon = 2130837518;
 			
 			// aapt resource value: 0x7f02000f
-			public const int toggle_selector = 2130837519;
+			public const int repeatToggleSelector = 2130837519;
 			
 			static Drawable()
 			{
