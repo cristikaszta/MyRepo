@@ -1,5 +1,3 @@
-using SQLite;
-
 namespace DisertationProject.Data.Models
 {
     /// <summary>
@@ -10,7 +8,6 @@ namespace DisertationProject.Data.Models
         //Why need this class person ?
         //public class Person
         //{
-        [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
         public string SongName { get; set; }
