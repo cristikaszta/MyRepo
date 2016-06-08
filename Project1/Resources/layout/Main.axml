@@ -51,4 +51,8 @@
             android:checked="false"
             android:drawableTop="@drawable/toggle_selector" />
     </LinearLayout>
+    <VideoView
+        android:id="@+id/YoutubeVideoView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
 </LinearLayout>

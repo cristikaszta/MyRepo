@@ -63,14 +63,14 @@ namespace DisertationProject.Controller
         private void SetupPlaylist()
         {
             playlist.Add(new List<Song>{
-                new Song{Source = Globals.SampleSong2, SongName = "Song 1"}, 
-                new Song{Source = Globals.SampleSong3, SongName = "Song 2"},
-                new Song{Source = Globals.SampleSong4, SongName = "Song 3"},
-                new Song{Source = Globals.SampleSong5, SongName = "Song 4"},
-                new Song{Source = Globals.SampleSong6, SongName = "Song 5"},
-                new Song{Source = Globals.SampleSong7, SongName = "Song 6"},
-                new Song{Source = Globals.SampleSong8, SongName = "Song 7"},
-                new Song{Source = Globals.SampleSong9, SongName = "Song 8"}
+                new Song{Source = Globals.SampleSong2, Name = "Song 1"}, 
+                new Song{Source = Globals.SampleSong3, Name = "Song 2"},
+                new Song{Source = Globals.SampleSong4, Name = "Song 3"},
+                new Song{Source = Globals.SampleSong5, Name = "Song 4"},
+                new Song{Source = Globals.SampleSong6, Name = "Song 5"},
+                new Song{Source = Globals.SampleSong7, Name = "Song 6"},
+                new Song{Source = Globals.SampleSong8, Name = "Song 7"},
+                new Song{Source = Globals.SampleSong9, Name = "Song 8"}
             });
         }
 
@@ -107,7 +107,7 @@ namespace DisertationProject.Controller
             if (!_musicPlayer.MediaPlayer.IsPlaying)
             {
                 _musicPlayer.Play(playlist.GetCurrentItem().Source);
-                StartForeground(playlist.GetCurrentItem().SongName);
+                StartForeground(playlist.GetCurrentItem().Name);
                 _wifi.AquireWifiLock();
             }
         }

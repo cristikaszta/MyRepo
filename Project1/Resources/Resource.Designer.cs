@@ -121,6 +121,9 @@ namespace DisertationProject
 		public partial class Id
 		{
 			
+			// aapt resource value: 0x7f070008
+			public const int YoutubeVideoView = 2131165192;
+			
 			// aapt resource value: 0x7f070000
 			public const int linearLayout1 = 2131165184;
 			

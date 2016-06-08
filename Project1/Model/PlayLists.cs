@@ -1,10 +1,8 @@
-using SQLite;
 
 namespace DisertationProject.Data.Models
 {
     public class PlayLists
     {
-        [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
         public string PlayListName { get; set; }

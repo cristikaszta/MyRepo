@@ -3,7 +3,10 @@ using Android.Content;
 using Android.OS;
 using Android.Widget;
 using DisertationProject.Data;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using Song = DisertationProject.Data.Models.Song;
 
 namespace DisertationProject.Controller
 {
@@ -13,6 +16,9 @@ namespace DisertationProject.Controller
     [Activity(Label = Globals.ProjectLabel, MainLauncher = true, Icon = "@drawable/ic_launcher")]
     public class MainController : Activity
     {
+        SqlConnection sqlconn;
+        string connsqlstring = string.Format("Server=tcp:ourserver.database.windows.net,1433;Data Source=ourserver.database.windows.net;Initial Catalog=ourdatabase;Persist Security Info=False;User ID=lanister;Password=tyrion0!;Pooling=False;MultipleActiveResultSets=False;Encrypt=False;Connection Timeout=30;");
+
         /// <summary>
         /// Main activity context
         /// </summary>
@@ -59,6 +65,17 @@ namespace DisertationProject.Controller
         /// </summary>
         private void Initialize()
         {
+            try
+            {
+                sqlconn = new SqlConnection(connsqlstring);
+
+                sqlconn.Open();
+            }
+            catch (Exception e)
+            {
+
+            }
+
             Context = ApplicationContext;
             Wifi = WifiService;
             Audio = AudioService;
@@ -93,7 +110,61 @@ namespace DisertationProject.Controller
                 else
                     SendCommand(Globals.ActionRepeatOff);
             };
+            //Long click to test the get song by id
+            _buttons[Globals.PlayButtonId].LongClick += (sender, args) => MainActivity_LongClick(16);
         }
+
+        private void MainActivity_LongClick(int playListId)
+        {
+            GetSong(playListId);
+        }
+
+        public void GetSong(int playListId)
+        {
+            var song = new Song();
+
+            SqlDataReader reader;
+            SqlCommand command = sqlconn.CreateCommand();
+            command.CommandText = "SELECT * FROM Songs WHERE Id = @playListId";
+
+            SqlParameter param = new SqlParameter();
+            param.ParameterName = "@playListId";
+            param.Value = playListId;
+
+            command.Parameters.Add(param);
+            reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+
+                    song.Id = int.Parse(reader.GetSqlValue(0).ToString());
+                    song.Name = reader.GetSqlValue(1).ToString();
+                    song.Source = reader.GetSqlValue(2).ToString();
+                    song.Artist = reader.GetSqlValue(3).ToString();
+                    song.Type = reader.GetSqlValue(4).ToString();
+                }
+
+            }
+            reader.Close();
+            // sqlconn.Close();
+
+
+            //WORK IN PROGRESS TO PLAY VIDEO FROM YOUTUBE LINK (HARCODED FOR NOW)
+            //I THINK IT DOES NOT WORK IN MY EMULATOR , PLEASE TRY DIRECTLY IN THE PHONE
+
+            //Obtain a reference to the VideoView in code.
+            var videoView = FindViewById<VideoView>(Resource.Id.YoutubeVideoView);
+            // Create an Android.Net.Uri for the video.
+            var uri = Android.Net.Uri.Parse("rtsp://r2---sn-a5m7zu76.c.youtube.com/Ck0LENy73wIaRAnTmlo5oUgpQhMYESARFEgGUg5yZWNvbW1lbmRhdGlvbnIhAWL2kyn64K6aQtkZVJdTxRoO88HsQjpE1a8d1GxQnGDmDA==/0/0/0/video.3gp");
+            // Pass this Uri to the VideoView.
+            videoView.SetVideoURI(uri);
+            // Start the VideoView.
+            videoView.RequestFocus();
+            videoView.Start();
+        }
+
 
         /// <summary>
         /// Set command method
