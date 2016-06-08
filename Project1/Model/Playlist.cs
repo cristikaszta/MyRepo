@@ -1,3 +1,4 @@
+
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,7 +9,6 @@ namespace DisertationProject.Model
     /// </summary>
     public class Playlist
     {
-        //[PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
         public string PlayListName { get; set; }
