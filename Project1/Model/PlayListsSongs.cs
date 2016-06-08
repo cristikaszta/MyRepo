@@ -1,4 +1,4 @@
-namespace DisertationProject.Data.Models
+namespace DisertationProject.Model
 {
     public class PlayListsSongs
     {

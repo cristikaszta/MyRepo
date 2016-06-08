@@ -2,8 +2,6 @@ using Android.App;
 using Android.Content;
 using Android.Media;
 using Android.OS;
-using DisertationProject.Data;
-using DisertationProject.Data.Models;
 using DisertationProject.Model;
 using System;
 using System.Collections.Generic;
@@ -22,6 +20,11 @@ namespace DisertationProject.Controller
         /// Song list
         /// </summary>
         public Playlist Playlist;
+
+        /// <summary>
+        /// Data controller
+        /// </summary>
+        private DataController _dataController;
 
         /// <summary>
         /// Network controller
@@ -61,6 +64,7 @@ namespace DisertationProject.Controller
         /// </summary>
         private void Initialize()
         {
+            _dataController = new DataController();
             Playlist = new Playlist();
             _networkController = new NetworkController();
             _musicPlayer = new MusicPlayerController();
@@ -80,16 +84,17 @@ namespace DisertationProject.Controller
         /// </summary>
         private void SetupPlaylist()
         {
-            Playlist.Add(new List<Song>{
-                new Song{Source = Globals.SampleSong2, SongName = "Song 1"},
-                new Song{Source = Globals.SampleSong3, SongName = "Song 2"},
-                new Song{Source = Globals.SampleSong4, SongName = "Song 3"},
-                new Song{Source = Globals.SampleSong5, SongName = "Song 4"},
-                new Song{Source = Globals.SampleSong6, SongName = "Song 5"},
-                new Song{Source = Globals.SampleSong7, SongName = "Song 6"},
-                new Song{Source = Globals.SampleSong8, SongName = "Song 7"},
-                new Song{Source = Globals.SampleSong9, SongName = "Song 8"}
-            });
+            _dataController.GetSongs();
+            //Playlist.Add(new List<Song>{
+            //    new Song{Source = Globals.SampleSong2, SongName = "Song 1"},
+            //    new Song{Source = Globals.SampleSong3, SongName = "Song 2"},
+            //    new Song{Source = Globals.SampleSong4, SongName = "Song 3"},
+            //    new Song{Source = Globals.SampleSong5, SongName = "Song 4"},
+            //    new Song{Source = Globals.SampleSong6, SongName = "Song 5"},
+            //    new Song{Source = Globals.SampleSong7, SongName = "Song 6"},
+            //    new Song{Source = Globals.SampleSong8, SongName = "Song 7"},
+            //    new Song{Source = Globals.SampleSong9, SongName = "Song 8"}
+            //});
         }
 
         /// <summary>
@@ -177,7 +182,7 @@ namespace DisertationProject.Controller
                 Playlist.DecrementPosition();
                 Play();
             }
-            else if (Playlist.IsRepeatOn())
+            else if (Playlist.IsRepeatEnabled())
             {
                 Playlist.SetPositionToEnd();
                 Play();
@@ -195,7 +200,7 @@ namespace DisertationProject.Controller
                 Playlist.IncrementPosition();
                 Play();
             }
-            else if (Playlist.IsRepeatOn())
+            else if (Playlist.IsRepeatEnabled())
             {
                 Playlist.ResetPosition();
                 Play();

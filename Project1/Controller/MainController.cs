@@ -2,8 +2,10 @@
 using Android.Content;
 using Android.OS;
 using Android.Widget;
-using DisertationProject.Data;
+using DisertationProject.Model;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 
 namespace DisertationProject.Controller
 {
@@ -44,6 +46,8 @@ namespace DisertationProject.Controller
         /// </summary>
         private CommonController _common;
 
+       
+
         /// <summary>
         /// On create method
         /// </summary>
@@ -64,6 +68,10 @@ namespace DisertationProject.Controller
         /// </summary>
         private void Initialize()
         {
+
+            
+
+
             //The context of the single, global Application object of the current process.
             Context = ApplicationContext;
             //The android services

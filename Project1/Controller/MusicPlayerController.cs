@@ -101,15 +101,15 @@ namespace DisertationProject.Controller
                 //AquireWifiLock();
                 //StartForeground();
             }
-            catch(Java.Lang.IllegalStateException)
+            catch(Java.Lang.IllegalStateException ex)
             {
                 //If the media player is called in an invalid state
-                throw new Java.Lang.IllegalStateException();
+                throw ex;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 //General exception
-                throw new Exception();
+                throw ex;
             }
         }
 

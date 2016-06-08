@@ -1,5 +1,3 @@
-using DisertationProject.Data.Models;
-using SQLite;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,17 +8,17 @@ namespace DisertationProject.Model
     /// </summary>
     public class Playlist
     {
-        [PrimaryKey, AutoIncrement]
+        //[PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
         public string PlayListName { get; set; }
 
-        public string Info { get; set; }
+        //public string Info { get; set; }
 
-        public override string ToString()
-        {
-            return string.Format("[Person: Id={0}, PlayListName={1}, Info={2}]", Id, PlayListName, Info);
-        }
+        //public override string ToString()
+        //{
+        //    return string.Format("[Person: Id={0}, PlayListName={1}, Info={2}]", Id, PlayListName, Info);
+        //}
 
 
         /// <summary>
@@ -39,9 +37,9 @@ namespace DisertationProject.Model
         private int _currentPosition;
 
         /// <summary>
-        /// The tracklist
+        /// The song list
         /// </summary>
-        private List<Song> _trackList;
+        private List<Song> _songList;
 
         /// <summary>
         /// Suffle playlist flag
@@ -64,7 +62,7 @@ namespace DisertationProject.Model
         public Playlist()
         {
             Init();
-            _trackList = new List<Song>();
+            _songList = new List<Song>();
             _totalItems = 0;
         }
 
@@ -75,7 +73,7 @@ namespace DisertationProject.Model
         public Playlist(List<Song> trackList)
         {
             Init();
-            _trackList = trackList;
+            _songList = trackList;
             _totalItems = trackList.Count;
         }
 
@@ -84,7 +82,7 @@ namespace DisertationProject.Model
         /// </summary>
         public void Add(Song item)
         {
-            _trackList.Add(item);
+            _songList.Add(item);
             _totalItems++;
         }
 
@@ -93,7 +91,7 @@ namespace DisertationProject.Model
         /// </summary>
         public void Add(List<Song> items)
         {
-            _trackList.AddRange(items);
+            _songList.AddRange(items);
             _totalItems += items.Count();
         }
 
@@ -102,9 +100,9 @@ namespace DisertationProject.Model
         /// </summary>
         public void Remove(Song item)
         {
-            if (_trackList.Any())
+            if (_songList.Any())
             {
-                _trackList.Remove(item);
+                _songList.Remove(item);
                 _totalItems--;
             }
         }
@@ -115,7 +113,7 @@ namespace DisertationProject.Model
         /// <returns></returns>
         public Song GetCurrentItem()
         {
-            return _trackList[_currentPosition];
+            return _songList[_currentPosition];
         }
 
         /// <summary>
@@ -212,10 +210,22 @@ namespace DisertationProject.Model
         /// Check if repeat flag is on
         /// </summary>
         /// <returns>Return true if repeat flag is on and false otherwise</returns>
-        public bool IsRepeatOn()
+        public bool IsRepeatEnabled()
         {
             var result = false;
             if (_repeatFlag)
+                result = true;
+            return result;
+        }
+
+        /// <summary>
+        /// Check if suffle flag is on
+        /// </summary>
+        /// <returns>Return true if suffle flag is on and false otherwise</returns>
+        public bool IsSuffleEnabled()
+        {
+            var result = false;
+            if (_suffleFlag)
                 result = true;
             return result;
         }
