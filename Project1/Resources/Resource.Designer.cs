@@ -121,14 +121,23 @@ namespace DisertationProject
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f070008
-			public const int YoutubeVideoView = 2131165192;
+			// aapt resource value: 0x7f07000b
+			public const int YoutubeVideoView = 2131165195;
+			
+			// aapt resource value: 0x7f07000a
+			public const int address_text = 2131165194;
+			
+			// aapt resource value: 0x7f070009
+			public const int get_address_button = 2131165193;
 			
 			// aapt resource value: 0x7f070000
 			public const int linearLayout1 = 2131165184;
 			
 			// aapt resource value: 0x7f070004
 			public const int linearLayout2 = 2131165188;
+			
+			// aapt resource value: 0x7f070008
+			public const int location_text = 2131165192;
 			
 			// aapt resource value: 0x7f070006
 			public const int nextButton = 2131165190;
