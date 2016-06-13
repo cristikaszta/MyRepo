@@ -1,8 +1,9 @@
 
-namespace DisertationProject.Data.Models
+namespace DisertationProject.Model
 {
     public class PlayLists
     {
+
         public int Id { get; set; }
 
         public string PlayListName { get; set; }

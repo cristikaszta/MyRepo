@@ -8,7 +8,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using DisertationProject.Data.Models;
+using DisertationProject.Model;
 
 namespace DisertationProject.Model
 {
@@ -35,7 +35,7 @@ namespace DisertationProject.Model
         /// <summary>
         /// The tracklist
         /// </summary>
-        private List<Song> _trackList;
+        public List<Song> SongList { get; set; }
 
         /// <summary>
         /// Suffle playlist flag
@@ -58,18 +58,18 @@ namespace DisertationProject.Model
         public Playlist()
         {
             Init();
-            _trackList = new List<Song>();
+            SongList = new List<Song>();
             _totalItems = 0;
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="trackList">The tracklist</param>
+        /// <_parameter name="trackList">The tracklist</_parameter>
         public Playlist(List<Song> trackList)
         {
             Init();
-            _trackList = trackList;
+            SongList = trackList;
             _totalItems = trackList.Count;
         }
 
@@ -78,7 +78,7 @@ namespace DisertationProject.Model
         /// </summary>
         public void Add(Song item)
         {
-            _trackList.Add(item);
+            SongList.Add(item);
             _totalItems++;
         }
 
@@ -87,7 +87,7 @@ namespace DisertationProject.Model
         /// </summary>
         public void Add(List<Song> items)
         {
-            _trackList.AddRange(items);
+            SongList.AddRange(items);
             _totalItems += items.Count();
         }
 
@@ -96,9 +96,9 @@ namespace DisertationProject.Model
         /// </summary>
         public void Remove(Song item)
         {
-            if (_trackList.Any())
+            if (SongList.Any())
             {
-                _trackList.Remove(item);
+                SongList.Remove(item);
                 _totalItems--;
             }
         }
@@ -109,7 +109,7 @@ namespace DisertationProject.Model
         /// <returns></returns>
         public Song GetCurrentItem()
         {
-            return _trackList[_currentPosition];
+            return SongList[_currentPosition];
         }
 
         /// <summary>

@@ -4,12 +4,11 @@ using Android.Locations;
 using Android.OS;
 using Android.Util;
 using Android.Widget;
-using DisertationProject.Data;
+using DisertationProject.Model;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using Song = DisertationProject.Data.Models.Song;
 using Android.Runtime;
 using System.Threading.Tasks;
 using System.Text;
@@ -81,14 +80,9 @@ namespace DisertationProject.Controller
         private IDictionary<int, Button> _buttons;
 
         /// <summary>
-        /// Common controller object
-        /// </summary>
-        private CommonController _common;
-
-        /// <summary>
         /// On create method
         /// </summary>
-        /// <param name="bundle">The bundle</param>
+        /// <_parameter name="bundle">The bundle</_parameter>
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -159,7 +153,6 @@ namespace DisertationProject.Controller
             Context = ApplicationContext;
             Wifi = WifiService;
             Audio = AudioService;
-            _common = new CommonController();
             _buttons = new Dictionary<int, Button>();
             SetupButtons();
         }
@@ -209,13 +202,22 @@ namespace DisertationProject.Controller
         /// </summary>
         private void SetupButtons()
         {
+            var buttonList = new List<int>
+            {
+               Globals.PlayButtonId,   
+               Globals.PauseButtonId,
+               Globals.StopButtonId,
+               Globals.PreviousButtonId,
+               Globals.NextButtonId,
+            };
             //Create the dictionaries
-            _common.addItemToDictionary<int, Button>(_buttons, Globals.PlayButtonId, FindViewById<Button>);
-            _common.addItemToDictionary<int, Button>(_buttons, Globals.PauseButtonId, FindViewById<Button>);
-            _common.addItemToDictionary<int, Button>(_buttons, Globals.StopButtonId, FindViewById<Button>);
-            _common.addItemToDictionary<int, Button>(_buttons, Globals.PreviousButtonId, FindViewById<Button>);
-            _common.addItemToDictionary<int, Button>(_buttons, Globals.NextButtonId, FindViewById<Button>);
-            _common.addItemToDictionary<int, Button>(_buttons, Globals.RepeatButtonId, FindViewById<ToggleButton>);
+            //addItemToDictionary<int, Button>(_buttons, Globals.PlayButtonId, FindViewById<Button>);
+            //addItemToDictionary<int, Button>(_buttons, Globals.PauseButtonId, FindViewById<Button>);
+            //addItemToDictionary<int, Button>(_buttons, Globals.StopButtonId, FindViewById<Button>);
+            //addItemToDictionary<int, Button>(_buttons, Globals.PreviousButtonId, FindViewById<Button>);
+            //addItemToDictionary<int, Button>(_buttons, Globals.NextButtonId, FindViewById<Button>);
+            Common.addItemToDictionary<int, Button>(_buttons, buttonList, FindViewById<Button>);
+            Common.addItemToDictionary<int, Button>(_buttons, Globals.RepeatButtonId, FindViewById<ToggleButton>);
 
             //Set click action
             _buttons[Globals.PlayButtonId].Click += (sender, args) => SendCommand(Globals.ActionPlay);
@@ -225,10 +227,8 @@ namespace DisertationProject.Controller
             _buttons[Globals.NextButtonId].Click += (sender, args) => SendCommand(Globals.ActionNext);
             _buttons[Globals.RepeatButtonId].Click += (sender, args) =>
             {
-                if (((ToggleButton)_buttons[Globals.RepeatButtonId]).Checked)
-                    SendCommand(Globals.ActionRepeatOn);
-                else
-                    SendCommand(Globals.ActionRepeatOff);
+                if (((ToggleButton)_buttons[Globals.RepeatButtonId]).Checked) SendCommand(Globals.ActionRepeatOn);
+                else SendCommand(Globals.ActionRepeatOff);
             };
             //Long click to test the get song by id
             _buttons[Globals.PlayButtonId].LongClick += (sender, args) => MainActivity_LongClick(16);
@@ -268,7 +268,7 @@ namespace DisertationProject.Controller
 
             }
             reader.Close();
-            // sqlconn.Close();
+            // _connection.Close();
 
 
             //WORK IN PROGRESS TO PLAY VIDEO FROM YOUTUBE LINK (HARCODED FOR NOW)
@@ -286,9 +286,9 @@ namespace DisertationProject.Controller
         }
 
         /// <summary>
-        /// Set command method
+        /// Set _command method
         /// </summary>
-        /// <param name="action">The action</param>
+        /// <_parameter name="action">The action</_parameter>
         private void SendCommand(string action)
         {
             var _intent = new Intent(action);
@@ -314,5 +314,6 @@ namespace DisertationProject.Controller
         //{
         //    throw new NotImplementedException();
         //}
+
     }
 }

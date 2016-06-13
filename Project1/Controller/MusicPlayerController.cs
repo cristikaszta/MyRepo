@@ -3,6 +3,7 @@ using Android.Content;
 using Android.Media;
 using Android.OS;
 using System;
+using DisertationProject.Model;
 
 namespace DisertationProject.Controller
 {
@@ -29,7 +30,7 @@ namespace DisertationProject.Controller
         /// On bind
         /// Don't do anything on bind
         /// </summary>
-        /// <param name="intent">The intent</param>
+        /// <_parameter name="intent">The intent</_parameter>
         /// <returns></returns>
         public override IBinder OnBind(Intent intent) { return null; }
 
@@ -55,7 +56,8 @@ namespace DisertationProject.Controller
             MediaPlayer.Error += (sender, args) =>
             {
                 //playback error
-                Console.WriteLine("Error in playback resetting: " + args.What);
+                //Console.WriteLine("Error in playback resetting: " + args.What);
+                throw new Common.Problem("Error in playback resetting: ");
                 Stop();//this will clean up and reset properly.
             };
         }
@@ -79,12 +81,12 @@ namespace DisertationProject.Controller
 
             try
             {
-                await MediaPlayer.SetDataSourceAsync(MainController.Context, Android.Net.Uri.Parse(songUrl));
+                await MediaPlayer.SetDataSourceAsync(MainController.Context, Android.Net.Uri.Parse(@songUrl));
                 var focusResult = _audioManager.RequestAudioFocus(this, Stream.Music, AudioFocus.Gain);
                 if (focusResult != AudioFocusRequest.Granted)
                 {
                     //could not get audio focus
-                    Console.WriteLine("Could not get audio focus");
+                    throw new Common.Problem("Could not get audio focus");
                 }
                 MediaPlayer.PrepareAsync();
                 //AquireWifiLock();
@@ -93,7 +95,7 @@ namespace DisertationProject.Controller
             catch (Exception ex)
             {
                 //unable to start playback log error
-                Console.WriteLine("Unable to start playback: " + ex);
+                throw new Common.Problem("Unable to start playback log error.");
             }
         }
 
@@ -143,7 +145,7 @@ namespace DisertationProject.Controller
         /// we should act correctly based on this.  "duck" to be quiet and when we gain go full.
         /// All applications are encouraged to follow this, but are not enforced.
         /// </summary>
-        /// <param name="focusChange"></param>
+        /// <_parameter name="focusChange"></_parameter>
         public void OnAudioFocusChange(AudioFocus focusChange)
         {
             switch (focusChange)

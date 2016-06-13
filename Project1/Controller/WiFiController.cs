@@ -56,7 +56,7 @@ namespace DisertationProject.Controller
         /// On bind
         /// Don't do anything on bind
         /// </summary>
-        /// <param name="intent">The intent</param>
+        /// <_parameter name="intent">The intent</_parameter>
         /// <returns></returns>
         public override IBinder OnBind(Intent intent) { return null; }
     }

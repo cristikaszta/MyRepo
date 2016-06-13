@@ -50,10 +50,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controller\CommonController.cs" />
+    <Compile Include="Controller\DatabaseController.cs" />
     <Compile Include="Controller\MusicPlayerController.cs" />
     <Compile Include="Controller\MusicServiceController.cs" />
     <Compile Include="Controller\WiFiController.cs" />
+    <Compile Include="Model\Common.cs" />
     <Compile Include="Model\Playlist.cs" />
     <Compile Include="Model\PlayLists.cs" />
     <Compile Include="Model\PlayListsSongs.cs" />
