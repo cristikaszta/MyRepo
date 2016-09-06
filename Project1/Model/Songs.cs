@@ -33,6 +33,11 @@ namespace DisertationProject.Model
         public string Type { get; set; }
 
         /// <summary>
+        /// Emotion
+        /// </summary>
+        public Emotion Emotion { get; set; }
+
+        /// <summary>
         /// Returns the full song name and source
         /// </summary>
         /// <returns></returns>
@@ -40,10 +45,6 @@ namespace DisertationProject.Model
         {
             return string.Format("{0} : {1} - {2}", Type, Artist, Name);
         }
-
-        public string Source { get; set; }
-
-        public Emotion Emotion { get; set; }
 
     }
 }

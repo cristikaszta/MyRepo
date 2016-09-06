@@ -47,7 +47,7 @@ namespace DisertationProject.Model
         /// <summary>
         /// The song list
         /// </summary>
-        private List<Song> _songList;
+        public List<Song> SongList;
 
         /// <summary>
         /// Suffle playlist flag
@@ -70,7 +70,7 @@ namespace DisertationProject.Model
         public Playlist()
         {
             Init();
-            _songList = new List<Song>();
+            SongList = new List<Song>();
             _totalItems = 0;
         }
 
@@ -81,7 +81,7 @@ namespace DisertationProject.Model
         public Playlist(List<Song> trackList)
         {
             Init();
-            _songList = trackList;
+            SongList = trackList;
             _totalItems = trackList.Count;
         }
 
@@ -90,7 +90,7 @@ namespace DisertationProject.Model
         /// </summary>
         public void Add(Song item)
         {
-            _songList.Add(item);
+            SongList.Add(item);
             _totalItems++;
         }
 
@@ -99,7 +99,7 @@ namespace DisertationProject.Model
         /// </summary>
         public void Add(List<Song> items)
         {
-            _songList.AddRange(items);
+            SongList.AddRange(items);
             _totalItems += items.Count();
         }
 
@@ -108,9 +108,9 @@ namespace DisertationProject.Model
         /// </summary>
         public void Remove(Song item)
         {
-            if (_songList.Any())
+            if (SongList.Any())
             {
-                _songList.Remove(item);
+                SongList.Remove(item);
                 _totalItems--;
             }
         }
@@ -121,7 +121,7 @@ namespace DisertationProject.Model
         /// <returns></returns>
         public Song GetCurrentItem()
         {
-            return _songList[_currentPosition];
+            return SongList[_currentPosition];
         }
 
         /// <summary>

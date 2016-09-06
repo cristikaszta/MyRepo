@@ -86,8 +86,8 @@ namespace DisertationProject.Controller
                     {
                         // To avoid unexpected bugs access columns by name.
                         song.Id = _reader.GetInt32(_reader.GetOrdinal("Id"));
-                        song.SongName = _reader.GetString(_reader.GetOrdinal("Name"));
-                        song.ArtistName = _reader.GetString(_reader.GetOrdinal("Artist"));
+                        song.Name = _reader.GetString(_reader.GetOrdinal("Name"));
+                        song.Artist = _reader.GetString(_reader.GetOrdinal("Artist"));
                         song.Source = _reader.GetString(_reader.GetOrdinal("Source"));
                         song.Emotion = _commonController.ConvertEmotion(_reader.GetString(_reader.GetOrdinal("Type")));
                         _songList.Add(song);

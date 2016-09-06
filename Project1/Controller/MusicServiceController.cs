@@ -44,7 +44,7 @@ namespace DisertationProject.Controller
         public Playlist NeutralPlaylist;
 
         /// <summary>
-        /// Wifi controller
+        /// Data controller
         /// </summary>
         private DataController _dataController;
 
@@ -72,7 +72,7 @@ namespace DisertationProject.Controller
         /// On bind
         /// Don't do anything on bind
         /// </summary>
-        /// <_parameter name="intent">The intent</_parameter>
+        /// <param name="intent">The intent</param>
         /// <returns></returns>
         public override IBinder OnBind(Intent intent) { return null; }
 
@@ -83,7 +83,7 @@ namespace DisertationProject.Controller
         {
             base.OnCreate();
             _databaseController = new DatabaseController();
-            _wifi = new WiFiController();
+            _networkController = new NetworkController();
             _musicPlayer = new MusicPlayerController();
             _playList = new Playlist();
             FullPlaylist = new Playlist();
@@ -96,7 +96,7 @@ namespace DisertationProject.Controller
         private void Initialize()
         {
             _dataController = new DataController();
-            Playlist = new Playlist();
+            //Playlist = new Playlist();
             _networkController = new NetworkController();
             _musicPlayer = new MusicPlayerController();
 
@@ -115,6 +115,8 @@ namespace DisertationProject.Controller
         /// </summary>
         private void SetupPlaylist()
         {
+            _dataController.GetSongs();
+
             var songList = _databaseController.GetSongs();
             FullPlaylist.Add(songList);
 
@@ -131,12 +133,12 @@ namespace DisertationProject.Controller
         }
 
         /// <summary>
-        /// On start _command
+        /// On start command
         /// </summary>
-        /// <_parameter name="intent">The intent</_parameter>
-        /// <_parameter name="flags">The start _command flags</_parameter>
-        /// <_parameter name="startId">Start id</_parameter>
-        /// <returns>Start _command result</returns>
+        /// <param name="intent">The intent</param>
+        /// <param name="flags">The start command flags</param>
+        /// <param name="startId">Start id</param>
+        /// <returns>Start command result</returns>
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
             switch (intent.Action)
@@ -155,7 +157,7 @@ namespace DisertationProject.Controller
 
         /// <summary>
         /// Play song method
-        /// <_parameter name="songUrl">The song URL string</_parameter>
+        /// <param name="songUrl">The song URL string</param>
         /// </summary>
         private void Play()
         {
@@ -163,8 +165,8 @@ namespace DisertationProject.Controller
             {
                 try
                 {
-                    _musicPlayer.Play(Playlist.GetCurrentItem().Source);
-                    StartForeground("Playing ", Playlist.GetCurrentItem().SongName);
+                    _musicPlayer.Play(_playList.GetCurrentItem().Source);
+                    StartForeground("Playing ", _playList.GetCurrentItem().Name);
                     _networkController.AquireWifiLock();
                 }
                 catch (Java.Lang.IllegalStateException)
@@ -180,9 +182,11 @@ namespace DisertationProject.Controller
             }
             else
             {
-                _musicPlayer.Play(_playList.GetCurrentItem().Source);
-                StartForeground(_playList.GetCurrentItem().ToString());
-                _wifi.AquireWifiLock();
+                Stop();
+                StartForeground("Check internet connection", "");
+                //_musicPlayer.Play(_playList.GetCurrentItem().Source);
+                //StartForeground(_playList.GetCurrentItem().ToString());
+                //_wifi.AquireWifiLock();
             }
         }
 
@@ -216,7 +220,7 @@ namespace DisertationProject.Controller
                 _playList.DecrementPosition();
                 Play();
             }
-            else if (_playList.IsRepeatOn())
+            else if (_playList.IsRepeatEnabled())
             {
                 _playList.SetPositionToEnd();
                 Play();
@@ -234,7 +238,7 @@ namespace DisertationProject.Controller
                 _playList.IncrementPosition();
                 Play();
             }
-            else if (_playList.IsRepeatOn())
+            else if (_playList.IsRepeatEnabled())
             {
                 _playList.ResetPosition();
                 Play();
@@ -280,13 +284,13 @@ namespace DisertationProject.Controller
             var pendingIntent = PendingIntent.GetActivity(MainController.Context, 0, new Intent(MainController.Context, typeof(MainController)), PendingIntentFlags.UpdateCurrent);
             var notification = new Notification
             {
-                TickerText = new Java.Lang.String(text),
+                TickerText = new Java.Lang.String(firstText + secondText),
                 Icon = Resource.Drawable.ic_stat_av_play_over_video
             };
 
             notification.Flags |= NotificationFlags.OngoingEvent;
 #pragma warning disable CS0618 // Type or member is obsolete
-            notification.SetLatestEventInfo(MainController.Context, "Music Streaming", text, pendingIntent);
+            notification.SetLatestEventInfo(MainController.Context, "Music Streaming", firstText + secondText, pendingIntent);
 #pragma warning restore CS0618 // Type or member is obsolete
             StartForeground(notificationId, notification);
         }
