@@ -1,6 +1,14 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using Android.App;
+using Android.Content;
+using Android.OS;
+using Android.Runtime;
+using Android.Views;
+using Android.Widget;
+using DisertationProject.Model;
 
 namespace DisertationProject.Model
 {
@@ -69,7 +77,7 @@ namespace DisertationProject.Model
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="trackList">The tracklist</param>
+        /// <_parameter name="trackList">The tracklist</_parameter>
         public Playlist(List<Song> trackList)
         {
             Init();

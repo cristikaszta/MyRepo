@@ -50,10 +50,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controller\DatabaseController.cs" />
     <Compile Include="Controller\CommonController.cs" />
     <Compile Include="Controller\DataController.cs" />
     <Compile Include="Controller\MusicPlayerController.cs" />
     <Compile Include="Controller\MusicServiceController.cs" />
+    <Compile Include="Controller\WiFiController.cs" />
+    <Compile Include="Model\Common.cs" />
     <Compile Include="Controller\NetworkController.cs" />
     <Compile Include="Model\Playlist.cs" />
     <Compile Include="Model\PlayListsSongs.cs" />
@@ -66,6 +69,7 @@
   <ItemGroup>
     <None Include="App.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="GettingStarted.Xamarin" />
     <None Include="Resources\AboutResources.txt" />

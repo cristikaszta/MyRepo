@@ -5,6 +5,8 @@ using Android.OS;
 using DisertationProject.Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Collections;
 
 namespace DisertationProject.Controller
 {
@@ -17,12 +19,32 @@ namespace DisertationProject.Controller
     public class MusicServiceController : Service
     {
         /// <summary>
-        /// Song list
+        /// Current play list
         /// </summary>
-        public Playlist Playlist;
+        private Playlist _playList;
 
         /// <summary>
-        /// Data controller
+        /// Full playlist
+        /// </summary>
+        public Playlist FullPlaylist;
+
+        /// <summary>
+        /// Happy playlist
+        /// </summary>
+        public Playlist HappyPlaylist;
+
+        /// <summary>
+        /// Sad playlist
+        /// </summary>
+        public Playlist SadPlaylist;
+
+        /// <summary>
+        /// Neutral playlist
+        /// </summary>
+        public Playlist NeutralPlaylist;
+
+        /// <summary>
+        /// Wifi controller
         /// </summary>
         private DataController _dataController;
 
@@ -37,6 +59,11 @@ namespace DisertationProject.Controller
         private MusicPlayerController _musicPlayer;
 
         /// <summary>
+        /// Database controller
+        /// </summary>
+        private DatabaseController _databaseController;
+
+        /// <summary>
         /// Notification Id
         /// </summary>
         private const int notificationId = 1;
@@ -45,7 +72,7 @@ namespace DisertationProject.Controller
         /// On bind
         /// Don't do anything on bind
         /// </summary>
-        /// <param name="intent">The intent</param>
+        /// <_parameter name="intent">The intent</_parameter>
         /// <returns></returns>
         public override IBinder OnBind(Intent intent) { return null; }
 
@@ -55,7 +82,11 @@ namespace DisertationProject.Controller
         public override void OnCreate()
         {
             base.OnCreate();
-            Initialize();
+            _databaseController = new DatabaseController();
+            _wifi = new WiFiController();
+            _musicPlayer = new MusicPlayerController();
+            _playList = new Playlist();
+            FullPlaylist = new Playlist();
             SetupPlaylist();
         }
 
@@ -84,26 +115,28 @@ namespace DisertationProject.Controller
         /// </summary>
         private void SetupPlaylist()
         {
-            _dataController.GetSongs();
-            //Playlist.Add(new List<Song>{
-            //    new Song{Source = Globals.SampleSong2, SongName = "Song 1"},
-            //    new Song{Source = Globals.SampleSong3, SongName = "Song 2"},
-            //    new Song{Source = Globals.SampleSong4, SongName = "Song 3"},
-            //    new Song{Source = Globals.SampleSong5, SongName = "Song 4"},
-            //    new Song{Source = Globals.SampleSong6, SongName = "Song 5"},
-            //    new Song{Source = Globals.SampleSong7, SongName = "Song 6"},
-            //    new Song{Source = Globals.SampleSong8, SongName = "Song 7"},
-            //    new Song{Source = Globals.SampleSong9, SongName = "Song 8"}
-            //});
+            var songList = _databaseController.GetSongs();
+            FullPlaylist.Add(songList);
+
+            songList = FullPlaylist.SongList.Where(p => p.Type == "H").Select(p => p).ToList();
+            HappyPlaylist = new Playlist(songList);
+
+            songList = FullPlaylist.SongList.Where(p => p.Type == "N").Select(p => p).ToList();
+            NeutralPlaylist = new Playlist(songList);
+
+            songList = FullPlaylist.SongList.Where(p => p.Type == "S").Select(p => p).ToList();
+            SadPlaylist = new Playlist(songList);
+
+            _playList = SadPlaylist;
         }
 
         /// <summary>
-        /// On start command
+        /// On start _command
         /// </summary>
-        /// <param name="intent">The intent</param>
-        /// <param name="flags">The start command flags</param>
-        /// <param name="startId">Start id</param>
-        /// <returns>Start command result</returns>
+        /// <_parameter name="intent">The intent</_parameter>
+        /// <_parameter name="flags">The start _command flags</_parameter>
+        /// <_parameter name="startId">Start id</_parameter>
+        /// <returns>Start _command result</returns>
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
             switch (intent.Action)
@@ -122,7 +155,7 @@ namespace DisertationProject.Controller
 
         /// <summary>
         /// Play song method
-        /// <param name="songUrl">The song URL string</param>
+        /// <_parameter name="songUrl">The song URL string</_parameter>
         /// </summary>
         private void Play()
         {
@@ -147,8 +180,9 @@ namespace DisertationProject.Controller
             }
             else
             {
-                Stop();
-                StartForeground("Check internet connection", "");
+                _musicPlayer.Play(_playList.GetCurrentItem().Source);
+                StartForeground(_playList.GetCurrentItem().ToString());
+                _wifi.AquireWifiLock();
             }
         }
 
@@ -177,14 +211,14 @@ namespace DisertationProject.Controller
         private void Previous()
         {
             Stop();
-            if (!Playlist.IsAtBeggining())
+            if (!_playList.IsAtBeggining())
             {
-                Playlist.DecrementPosition();
+                _playList.DecrementPosition();
                 Play();
             }
-            else if (Playlist.IsRepeatEnabled())
+            else if (_playList.IsRepeatOn())
             {
-                Playlist.SetPositionToEnd();
+                _playList.SetPositionToEnd();
                 Play();
             }
         }
@@ -195,14 +229,14 @@ namespace DisertationProject.Controller
         public void Next()
         {
             Stop();
-            if (!Playlist.IsAtEnd())
+            if (!_playList.IsAtEnd())
             {
-                Playlist.IncrementPosition();
+                _playList.IncrementPosition();
                 Play();
             }
-            else if (Playlist.IsRepeatEnabled())
+            else if (_playList.IsRepeatOn())
             {
-                Playlist.ResetPosition();
+                _playList.ResetPosition();
                 Play();
             }
         }
@@ -212,7 +246,7 @@ namespace DisertationProject.Controller
         /// </summary>
         public void ToggleRepeatOn()
         {
-            Playlist.SetRepeatOn();
+            _playList.SetRepeatOn();
         }
 
         /// <summary>
@@ -220,7 +254,7 @@ namespace DisertationProject.Controller
         /// </summary>
         public void ToggleRepeatOff()
         {
-            Playlist.SetRepeatOff();
+            _playList.SetRepeatOff();
         }
 
         /// <summary>
@@ -246,13 +280,13 @@ namespace DisertationProject.Controller
             var pendingIntent = PendingIntent.GetActivity(MainController.Context, 0, new Intent(MainController.Context, typeof(MainController)), PendingIntentFlags.UpdateCurrent);
             var notification = new Notification
             {
-                TickerText = new Java.Lang.String(firstText + secondText),
+                TickerText = new Java.Lang.String(text),
                 Icon = Resource.Drawable.ic_stat_av_play_over_video
             };
 
             notification.Flags |= NotificationFlags.OngoingEvent;
 #pragma warning disable CS0618 // Type or member is obsolete
-            notification.SetLatestEventInfo(MainController.Context, "Music Streaming", firstText + secondText, pendingIntent);
+            notification.SetLatestEventInfo(MainController.Context, "Music Streaming", text, pendingIntent);
 #pragma warning restore CS0618 // Type or member is obsolete
             StartForeground(notificationId, notification);
         }
