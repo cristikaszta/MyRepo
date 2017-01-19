@@ -2,6 +2,8 @@ using Android.App;
 using Android.Content;
 using Android.Media;
 using Android.OS;
+using Android.Views;
+using Android.Widget;
 using DisertationProject.Model;
 using System;
 using System.Collections.Generic;
@@ -18,6 +20,10 @@ namespace DisertationProject.Controller
                           Globals.ActionRepeatOn, Globals.ActionRepeatOff })]
     public class MusicServiceController : Service
     {
+        public Intent intent;
+
+        private TextView t;
+
         /// <summary>
         /// Current play list
         /// </summary>
@@ -76,19 +82,30 @@ namespace DisertationProject.Controller
         /// <returns></returns>
         public override IBinder OnBind(Intent intent) { return null; }
 
+        string[] items;
+
+        public ArrayAdapter<string> ListAdapter { get; private set; }
+
         /// <summary>
         /// On create simply detect some of our managers
         /// </summary>
         public override void OnCreate()
         {
             base.OnCreate();
-            _databaseController = new DatabaseController();
+            //_databaseController = new DatabaseController();
+            intent = new Intent(Globals.TheAction);
             _networkController = new NetworkController();
             _musicPlayer = new MusicPlayerController();
             _playList = new Playlist();
             FullPlaylist = new Playlist();
             SetupPlaylist();
+
+
+            items = new string[] { "Vegetables", "Fruits", "Flower Buds", "Legumes", "Bulbs", "Tubers" };
+            ListAdapter = new ArrayAdapter<String>(this, Android.Resource.Layout.SimpleListItem1, items);
         }
+
+       // protected override void OnListItemClick(ListView l, View v, int position, long id);
 
         /// <summary>
         /// Initialize
@@ -105,7 +122,8 @@ namespace DisertationProject.Controller
             //When we have error in the media player
             _musicPlayer.MediaPlayer.Error += (sender, args) =>
             {
-                StartForeground("Error in media player", "");
+                //StartForeground("Error in media player", "");
+                // t.Text = "Error in media player";
                 Stop();
             };
         }
@@ -115,21 +133,32 @@ namespace DisertationProject.Controller
         /// </summary>
         private void SetupPlaylist()
         {
-            _dataController.GetSongs();
+            //_dataController.GetSongs();
 
-            var songList = _databaseController.GetSongs();
+            //var songList = _databaseController.GetSongs();
+            var songList = new List<Song>
+            {
+                //new Song { Artist = "Alex Jones", Name = "My lovely", Emotion = Globals.Emotions.Happy, Source = Globals.SampleSong2},
+                //new Song { Artist = "Tomas Mick", Name = "To you", Emotion = Globals.Emotions.Sad, Source = Globals.SampleSong3},
+                new Song { Artist = "Yu", Name = "ERT", Emotion = Globals.Emotions.Sad, Source = Globals.SampleSong4},
+                new Song { Artist = "Nicholas", Name = "S1u", Emotion = Globals.Emotions.Angry, Source = Globals.SampleSong5},
+                new Song { Artist = "Volt", Name = "is it you", Emotion = Globals.Emotions.Sad, Source = Globals.SampleSong6},
+                //new Song { Artist = "Tomas Mick", Name = "To", Emotion = Globals.Emotions.Happy, Source = Globals.SampleSong7},
+                //new Song { Artist =  "Mick", Name = "To you", Emotion = Globals.Emotions.Neutral, Source = Globals.SampleSong8},
+            };
+
             FullPlaylist.Add(songList);
 
-            songList = FullPlaylist.SongList.Where(p => p.Type == "H").Select(p => p).ToList();
+            songList = FullPlaylist.SongList.Where(p => p.Emotion == Globals.Emotions.Happy).Select(p => p).ToList();
             HappyPlaylist = new Playlist(songList);
 
-            songList = FullPlaylist.SongList.Where(p => p.Type == "N").Select(p => p).ToList();
+            songList = FullPlaylist.SongList.Where(p => p.Emotion == Globals.Emotions.Neutral).Select(p => p).ToList();
             NeutralPlaylist = new Playlist(songList);
 
-            songList = FullPlaylist.SongList.Where(p => p.Type == "S").Select(p => p).ToList();
+            songList = FullPlaylist.SongList.Where(p => p.Emotion == Globals.Emotions.Sad).Select(p => p).ToList();
             SadPlaylist = new Playlist(songList);
 
-            _playList = SadPlaylist;
+            _playList = FullPlaylist;
         }
 
         /// <summary>
@@ -166,22 +195,29 @@ namespace DisertationProject.Controller
                 try
                 {
                     _musicPlayer.Play(_playList.GetCurrentItem().Source);
+                    // t.Text = "PLaying";
                     StartForeground("Playing ", _playList.GetCurrentItem().Name);
                     _networkController.AquireWifiLock();
                 }
                 catch (Java.Lang.IllegalStateException)
                 {
-                    StartForeground("Illegal state exception", "");
+                    SendBroadcast(intent);
+                    // t.Text = "Illegal state exception";
+                    // StartForeground("Illegal state exception", "");
                     Stop();
                 }
                 catch (Exception)
                 {
-                    StartForeground("General exception", "");
+                    SendBroadcast(intent);
+                    // t.Text = "General exception";
+                    //StartForeground("General exception", "");
                     Stop();
                 }
             }
             else
             {
+                //intent.PutExtra(Constants.Extra.DataToPassToActivity, someValue);
+                SendBroadcast(intent);
                 Stop();
                 StartForeground("Check internet connection", "");
                 //_musicPlayer.Play(_playList.GetCurrentItem().Source);

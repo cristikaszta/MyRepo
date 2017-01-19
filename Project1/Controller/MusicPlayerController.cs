@@ -3,7 +3,7 @@ using Android.Content;
 using Android.Media;
 using Android.OS;
 using System;
-using DisertationProject.Model;
+using static DisertationProject.Model.Common;
 
 namespace DisertationProject.Controller
 {
@@ -68,8 +68,8 @@ namespace DisertationProject.Controller
             {
                 //playback error
                 //Console.WriteLine("Error in playback resetting: " + args.What);
-                throw new Common.Problem("Error in playback resetting: ");
                 Stop();//this will clean up and reset properly.
+                throw new Problem("Error in playback resetting: ");
             };
         }
 
@@ -97,7 +97,7 @@ namespace DisertationProject.Controller
                 if (focusResult != AudioFocusRequest.Granted)
                 {
                     //could not get audio focus
-                    throw new Common.Problem("Could not get audio focus");
+                    throw new Problem("Could not get audio focus");
                 }
                 MediaPlayer.PrepareAsync();
                 //AquireWifiLock();
@@ -108,10 +108,10 @@ namespace DisertationProject.Controller
                 //If the media player is called in an invalid state
                 throw ex;
             }
-            catch (Exception ex)
+            catch (Problem)
             {
                 //unable to start playback log error
-                throw new Common.Problem("Unable to start playback log error.");
+                throw new Problem("Unable to start playback log error.");
             }
         }
 

@@ -27,10 +27,10 @@ namespace DisertationProject.Model
         /// </summary>
         public string Artist { get; set; }
 
-        /// <summary>
-        /// Song type: H, S or N
-        /// </summary>
-        public string Type { get; set; }
+        ///// <summary>
+        ///// Song type: H, S or N
+        ///// </summary>
+        //public string Type { get; set; }
 
         /// <summary>
         /// Emotion
@@ -43,7 +43,7 @@ namespace DisertationProject.Model
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("{0} : {1} - {2}", Type, Artist, Name);
+            return string.Format("{0} : {1} - {2}", Emotion.ToString(), Artist, Name);
         }
 
     }

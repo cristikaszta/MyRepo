@@ -5,20 +5,26 @@
     android:layout_height="fill_parent"
     android:background="@color/background"
     android:padding="0dp">
-<!--<LinearLayout
-        android:id="@+id/linearLayout1"
+    <LinearLayout
+        android:id="@+id/linearLayout4"
         android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="230.5dp"
+        android:layout_height="230.5dp"
         android:layout_gravity="center_horizontal">
-        <TextView
-            android:text="Text"
+        <ListView
+            android:id="@+id/songListView"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent" />
+    <!--<TextView
+            android:text="Empty"
+            android:textSize="20sp"
+            android:textColor="@color/black"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textView1"
             android:layout_marginBottom="188.5dp"
-            android:layout_marginRight="155.0dp" />
-    </LinearLayout>-->
+            android:layout_marginRight="155.0dp" />-->
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:orientation="horizontal"
@@ -66,6 +72,20 @@
             android:drawableTop="@drawable/repeatToggleSelector" />
     </LinearLayout>
     <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No errors"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+    </LinearLayout>
+<!--<LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -97,7 +117,7 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_marginTop="10dp" />
-    </LinearLayout>
+    </LinearLayout>-->
 <!--<LinearLayout
         android:id="@+id/linearLayout3"
         android:orientation="horizontal"

@@ -59,7 +59,7 @@ namespace DisertationProject.Controller
             //string connsqlstring = string.Format("Server=tcp:ourserver.database.windows.net,1433;Data Source=ourserver.database.windows.net;Initial Catalog=ourdatabase;Persist Security Info=False;User ID=lanister;Password=tyrion0!;Pooling=False;MultipleActiveResultSets=False;Encrypt=False;Connection Timeout=30;");
             try
             {
-                _connection = new SqlConnection(Globals.TheConnectionString);
+                _connection = new SqlConnection(Globals.ConnectionString);
                 _connection.Open();
             }
             catch (Exception e)
@@ -90,7 +90,7 @@ namespace DisertationProject.Controller
                     song.Name = _reader.GetString(_reader.GetOrdinal("Name"));
                     song.Source = _reader.GetString(_reader.GetOrdinal("Source"));
                     song.Artist = _reader.GetString(_reader.GetOrdinal("Artist"));
-                    song.Type = _reader.GetString(_reader.GetOrdinal("Type"));
+                    //song.Type = _reader.GetString(_reader.GetOrdinal("Type"));
                     songList.Add(song);
                 }
             }
