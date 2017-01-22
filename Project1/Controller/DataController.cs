@@ -7,10 +7,6 @@ namespace DisertationProject.Controller
 {
     public class DataController
     {
-        /// <summary>
-        /// Common controller
-        /// </summary>
-        private CommonController _commonController;
 
         /// <summary>
         /// SQL connection
@@ -46,7 +42,6 @@ namespace DisertationProject.Controller
         private void Initialize()
         {
             _songList = new List<Song>();
-            _commonController = new CommonController();
             _command = new SqlCommand();
             EstablishConnection();
         }
@@ -89,7 +84,6 @@ namespace DisertationProject.Controller
                         song.Name = _reader.GetString(_reader.GetOrdinal("Name"));
                         song.Artist = _reader.GetString(_reader.GetOrdinal("Artist"));
                         song.Source = _reader.GetString(_reader.GetOrdinal("Source"));
-                        song.Emotion = _commonController.ConvertEmotion(_reader.GetString(_reader.GetOrdinal("Type")));
                         _songList.Add(song);
                     }
                 }

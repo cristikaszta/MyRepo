@@ -85,10 +85,6 @@ namespace DisertationProject.Controller
         /// </summary>
         private IDictionary<int, Button> _buttons;
 
-        /// <summary>
-        /// Common controller object
-        /// </summary>
-        private CommonController _common;
 
         public TextView errorTextBox;
 
@@ -188,8 +184,8 @@ namespace DisertationProject.Controller
                Globals.NextButtonId,
             };
             //Create the dictionaries
-            Common.addItemToDictionary<int, Button>(_buttons, buttonList, FindViewById<Button>);
-            Common.addItemToDictionary<int, Button>(_buttons, Globals.RepeatButtonId, FindViewById<ToggleButton>);
+            CommonController.addItemToDictionary<int, Button>(_buttons, buttonList, FindViewById<Button>);
+            CommonController.addItemToDictionary<int, Button>(_buttons, Globals.RepeatButtonId, FindViewById<ToggleButton>);
 
             //Set click action
             _buttons[Globals.PlayButtonId].Click += (sender, args) => SendCommand(Globals.ActionPlay);

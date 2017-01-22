@@ -3,7 +3,7 @@ using Android.Content;
 using Android.Media;
 using Android.OS;
 using System;
-using static DisertationProject.Model.Common;
+using static DisertationProject.Controller.CommonController;
 
 namespace DisertationProject.Controller
 {
