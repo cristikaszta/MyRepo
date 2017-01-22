@@ -44,10 +44,6 @@ namespace DisertationProject.Model
         public const string SampleSong8 = @"http://www.tonycuffe.com/mp3/cairnomount.mp3";
         public const string SampleSong9 = @"http://www.tonycuffe.com/mp3/pipers%20hut.mp3";
 
-
-        //Connection string 
-        //public const string TheConnectionString = "Server=tcp:ourserver.database.windows.net,1433;Data Source=ourserver.database.windows.net;Initial Catalog=ourdatabase;Persist Security Info=False;User ID=lanister;Password=tyrion0!;Pooling=False;MultipleActiveResultSets=False;Encrypt=False;Connection Timeout=30;";
-
         //Enumerations
         public enum Emotions { Sad, Happy, Neutral, Angry }
     }

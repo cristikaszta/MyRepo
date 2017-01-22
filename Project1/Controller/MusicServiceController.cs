@@ -22,7 +22,7 @@ namespace DisertationProject.Controller
     {
         public Intent intent;
 
-        private TextView t;
+        //private TextView t;
 
         /// <summary>
         /// Current play list
@@ -219,7 +219,7 @@ namespace DisertationProject.Controller
                 //intent.PutExtra(Constants.Extra.DataToPassToActivity, someValue);
                 SendBroadcast(intent);
                 Stop();
-                StartForeground("Check internet connection", "");
+                //StartForeground("Check internet connection", "");
                 //_musicPlayer.Play(_playList.GetCurrentItem().Source);
                 //StartForeground(_playList.GetCurrentItem().ToString());
                 //_wifi.AquireWifiLock();

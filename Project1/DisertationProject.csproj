@@ -51,14 +51,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controller\DatabaseController.cs" />
-    <Compile Include="Controller\CommonController.cs" />
+    <Compile Include="Controller\Helper.cs" />
     <Compile Include="Controller\DataController.cs" />
     <Compile Include="Controller\MusicPlayerController.cs" />
     <Compile Include="Controller\MusicServiceController.cs" />
     <Compile Include="Controller\NetworkController.cs" />
     <Compile Include="Model\Playlist.cs" />
     <Compile Include="Model\Songs.cs" />
-    <Compile Include="Model\Constants.cs" />
+    <Compile Include="Model\Globals.cs" />
     <Compile Include="Controller\MainController.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -4,7 +4,7 @@ using Emotion = DisertationProject.Model.Globals.Emotions;
 
 namespace DisertationProject.Controller
 {
-    public class CommonController
+    public class Helper
     {
         /// <summary>
         /// Custom exception
@@ -55,7 +55,7 @@ namespace DisertationProject.Controller
 
         #region Converters
 
-        public static Emotion ConvertEmotion(string str)
+        public static Emotion Convert(string str)
         {
             Emotion result;
             switch (str)
@@ -78,7 +78,7 @@ namespace DisertationProject.Controller
                 case Emotion.Angry: result = "A"; break;
                 case Emotion.Sad: result = "S"; break;
                 case Emotion.Neutral: result = "N"; break;
-                default: result = "H"; break;
+                default: result = "N"; break;
             }
             return result;
         }
