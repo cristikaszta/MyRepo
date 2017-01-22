@@ -65,11 +65,6 @@ namespace DisertationProject.Controller
         private MusicPlayerController _musicPlayer;
 
         /// <summary>
-        /// Database controller
-        /// </summary>
-        private DatabaseController _databaseController;
-
-        /// <summary>
         /// Notification Id
         /// </summary>
         private const int notificationId = 1;
