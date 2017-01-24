@@ -38,8 +38,8 @@ namespace DisertationProject.Controller
         /// </summary>
         public NetworkController()
         {
-            _wifiManager = (WifiManager)MainController.Context.GetSystemService(MainController.Wifi);
-            _connectivityManager = (ConnectivityManager)MainController.Context.GetSystemService(MainController.Connectivity);
+            _wifiManager = (WifiManager)MainActivity.Context.GetSystemService(MainActivity.Wifi);
+            _connectivityManager = (ConnectivityManager)MainActivity.Context.GetSystemService(MainActivity.Connectivity);
             _wifiLock = _wifiManager.CreateWifiLock(WifiMode.Full, "xamarin_wifi_lock");
             RefreshNetworkInfo();
         }

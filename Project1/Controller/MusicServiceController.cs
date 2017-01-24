@@ -20,12 +20,13 @@ namespace DisertationProject.Controller
                           Globals.ActionRepeatOn, Globals.ActionRepeatOff })]
     public class MusicServiceController : Service
     {
+        /// <summary>
+        /// Intent
+        /// </summary>
         public Intent intent;
 
-        //private TextView t;
-
         /// <summary>
-        /// Current play list
+        /// Current playlist
         /// </summary>
         private Playlist _playList;
 
@@ -300,7 +301,7 @@ namespace DisertationProject.Controller
         /// </summary>
         private void StartForeground(string firstText, string secondText)
         {
-            var pendingIntent = PendingIntent.GetActivity(MainController.Context, 0, new Intent(MainController.Context, typeof(MainController)), PendingIntentFlags.UpdateCurrent);
+            var pendingIntent = PendingIntent.GetActivity(MainActivity.Context, 0, new Intent(MainActivity.Context, typeof(MainActivity)), PendingIntentFlags.UpdateCurrent);
             var notification = new Notification
             {
                 TickerText = new Java.Lang.String(firstText + secondText),
@@ -309,7 +310,7 @@ namespace DisertationProject.Controller
 
             notification.Flags |= NotificationFlags.OngoingEvent;
 #pragma warning disable CS0618 // Type or member is obsolete
-            notification.SetLatestEventInfo(MainController.Context, "Music Streaming", firstText + secondText, pendingIntent);
+            notification.SetLatestEventInfo(MainActivity.Context, "Music Streaming", firstText + secondText, pendingIntent);
 #pragma warning restore CS0618 // Type or member is obsolete
             StartForeground(notificationId, notification);
         }
