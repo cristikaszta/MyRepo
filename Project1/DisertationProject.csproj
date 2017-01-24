@@ -64,6 +64,7 @@
     <Compile Include="Controller\MusicPlayerController.cs" />
     <Compile Include="Controller\MusicServiceController.cs" />
     <Compile Include="Controller\NetworkController.cs" />
+    <Compile Include="Controller\SomeBroadcastReceiver.cs" />
     <Compile Include="Model\Playlist.cs" />
     <Compile Include="Model\Songs.cs" />
     <Compile Include="Model\Globals.cs" />

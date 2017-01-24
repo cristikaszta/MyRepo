@@ -77,30 +77,19 @@ namespace DisertationProject.Controller
         /// <returns></returns>
         public override IBinder OnBind(Intent intent) { return null; }
 
-        string[] items;
-
-        public ArrayAdapter<string> ListAdapter { get; private set; }
-
         /// <summary>
         /// On create simply detect some of our managers
         /// </summary>
         public override void OnCreate()
         {
             base.OnCreate();
-            //_databaseController = new DatabaseController();
             intent = new Intent(Globals.TheAction);
             _networkController = new NetworkController();
             _musicPlayer = new MusicPlayerController();
             _playList = new Playlist();
             FullPlaylist = new Playlist();
             SetupPlaylist();
-
-
-            items = new string[] { "Vegetables", "Fruits", "Flower Buds", "Legumes", "Bulbs", "Tubers" };
-            ListAdapter = new ArrayAdapter<String>(this, Android.Resource.Layout.SimpleListItem1, items);
         }
-
-       // protected override void OnListItemClick(ListView l, View v, int position, long id);
 
         /// <summary>
         /// Initialize
@@ -128,9 +117,6 @@ namespace DisertationProject.Controller
         /// </summary>
         private void SetupPlaylist()
         {
-            //_dataController.GetSongs();
-
-            //var songList = _databaseController.GetSongs();
             var songList = new List<Song>
             {
                 //new Song { Artist = "Alex Jones", Name = "My lovely", Emotion = Globals.Emotions.Happy, Source = Globals.SampleSong2},
@@ -185,6 +171,8 @@ namespace DisertationProject.Controller
         /// </summary>
         private void Play()
         {
+            intent = new Intent(Globals.TheAction);
+            SendBroadcast(intent);
             if (_networkController.IsOnline())
             {
                 try
@@ -324,24 +312,6 @@ namespace DisertationProject.Controller
             notification.SetLatestEventInfo(MainController.Context, "Music Streaming", firstText + secondText, pendingIntent);
 #pragma warning restore CS0618 // Type or member is obsolete
             StartForeground(notificationId, notification);
-        }
-
-        /// <summary>
-        /// Music broadcast receiver
-        /// Handle AudioBecomingNoisy aka headphones unplugged
-        /// </summary>
-        [BroadcastReceiver]
-        [IntentFilter(new[] { AudioManager.ActionAudioBecomingNoisy })]
-        public class MusicBroadcastReceiver : BroadcastReceiver
-        {
-            public override void OnReceive(Context context, Intent intent)
-            {
-                if (intent.Action != AudioManager.ActionAudioBecomingNoisy)
-                    return;
-                //signal the service to stop!
-                var stopIntent = new Intent(Globals.ActionStop);
-                context.StartService(stopIntent);
-            }
         }
     }
 }

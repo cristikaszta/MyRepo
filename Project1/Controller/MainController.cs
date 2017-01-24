@@ -52,6 +52,7 @@ namespace DisertationProject.Controller
         /// </summary>
         private IDictionary<int, Button> _buttons;
 
+        public SomeBroadcastReceiver _receiver;
 
         private TextView _errorTextBox;
 
@@ -66,9 +67,9 @@ namespace DisertationProject.Controller
             Wifi = WifiService;
             Audio = AudioService;
 
-            SetupButtons();
             _buttons = new Dictionary<int, Button>();
             _errorTextBox = (TextView)FindViewById(Globals.ErrorTextBox);    
+            SetupButtons();
 
         }
         
@@ -79,11 +80,16 @@ namespace DisertationProject.Controller
         /// <_parameter name="bundle">The bundle</_parameter>
         protected override void OnCreate(Bundle bundle)
         {
-
+            base.OnCreate(bundle);
             // Set our view from the "main" layout resource
             SetContentView(Globals.MainLayoutId);
        
             Initialize();
+
+            _receiver = new SomeBroadcastReceiver();
+            IntentFilter _intentFilter = new IntentFilter();
+            _intentFilter.AddAction(Globals.TheAction);
+            Context.RegisterReceiver(_receiver, _intentFilter);
         }
 
         /// <summary>
@@ -125,6 +131,12 @@ namespace DisertationProject.Controller
             _errorTextBox.Text = "Playing";
             var _intent = new Intent(action);
             StartService(_intent);
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            _receiver.UnregisterFromRuntime();
         }
     }
 }
