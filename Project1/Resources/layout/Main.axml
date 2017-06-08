@@ -10,11 +10,13 @@
         android:orientation="horizontal"
         android:layout_width="230.5dp"
         android:layout_height="230.5dp"
-        android:layout_gravity="center_horizontal">
+        android:layout_gravity="center_horizontal"
+        android:background="#230045">
         <ListView
             android:id="@+id/songListView"
-            android:layout_height="match_parent"
-            android:layout_width="match_parent" />
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:background="#000000" />
     <!--<TextView
             android:text="Empty"
             android:textSize="20sp"

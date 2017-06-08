@@ -1,7 +1,8 @@
+
 namespace DisertationProject.Model
 {
     /// <summary>
-    /// GLobals
+    /// Globals
     /// </summary>
     public static class Globals
     {
@@ -20,7 +21,7 @@ namespace DisertationProject.Model
         public const int SongListView = Resource.Id.songListView;
 
         //Actions
-        public const string ActionPlay = "PLAY";
+        public const string ActionPlay = "com.xamarin.action.PLAY";
         public const string ActionPause = "com.xamarin.action.PAUSE";
         public const string ActionStop = "com.xamarin.action.STOP";
         public const string ActionPrevious = "com.xamarin.action.PREVIOUS";
@@ -28,7 +29,12 @@ namespace DisertationProject.Model
         public const string ActionRepeatOn = "REPEAT_ON";
         public const string ActionRepeatOff = "REPEAT_OFF";
 
-        public const string TheAction = "123434";
+        //Errors
+        public const string TestAction = "123434";
+        public const string GeneralException = "GeneralException";
+        public const string IllegalStateException = "IllegalStateException";
+        public const string NetworkOffline = "NetworkOffline";
+        public const string DatabaseError = "DatabaseError";
 
         //Labels
         public const string ProjectLabel = "DisertationProject";
@@ -46,5 +52,8 @@ namespace DisertationProject.Model
 
         //Enumerations
         public enum Emotions { Sad, Happy, Neutral, Angry }
+        public enum TextType { Info, Warning, Error }
+        public enum PlayState { Playing, Stopped, Paused }
+        public enum State { On, Off }
     }
 }

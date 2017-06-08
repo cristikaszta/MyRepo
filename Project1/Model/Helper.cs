@@ -4,16 +4,11 @@ using Emotion = DisertationProject.Model.Globals.Emotions;
 
 namespace DisertationProject.Controller
 {
+    /// <summary>
+    /// Helper class
+    /// </summary>
     public class Helper
     {
-        /// <summary>
-        /// Custom exception
-        /// </summary>
-        public class Problem : Exception
-        {
-            public Problem(string message) : base(message) { }
-        }
-
         /// <summary>
         /// Method used to add items to dictionaries
         /// </summary>
@@ -24,7 +19,7 @@ namespace DisertationProject.Controller
         /// <param name="value">The value</param>
         public static void addItemToDictionary<T1, T2>(IDictionary<T1, T2> dictionary, T1 key, Func<T1, T2> value)
         {
-            dictionary.Add(key, (T2)value(key));
+            dictionary.Add(key, value(key));
         }
 
         /// <summary>
@@ -55,6 +50,11 @@ namespace DisertationProject.Controller
 
         #region Converters
 
+        /// <summary>
+        /// Convert string to emotion enum
+        /// </summary>
+        /// <param name="str">String text</param>
+        /// <returns>Emotion enum</returns>
         public static Emotion Convert(string str)
         {
             Emotion result;
@@ -69,10 +69,15 @@ namespace DisertationProject.Controller
             return result;
         }
 
-        public static string Convert(Emotion str)
+        /// <summary>
+        /// Convert emotion enum to string text
+        /// </summary>
+        /// <param name="emotion">Emotion enum value</param>
+        /// <returns>String text</returns>
+        public static string Convert(Emotion emotion)
         {
             string result;
-            switch (str)
+            switch (emotion)
             {
                 case Emotion.Happy: result = "H"; break;
                 case Emotion.Angry: result = "A"; break;

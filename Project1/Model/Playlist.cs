@@ -30,17 +30,17 @@ namespace DisertationProject.Model
         /// <summary>
         /// Repeat flag
         /// </summary>
-        private bool _repeatFlag;
+        private bool repeatFlag;
 
         /// <summary>
         /// The total items in the playlist
         /// </summary>
-        private int _totalItems;
+        private int totalItems;
 
         /// <summary>
         /// The current position in the playlist
         /// </summary>
-        private int _currentPosition;
+        private int currentPosition;
 
         /// <summary>
         /// The song list
@@ -50,16 +50,26 @@ namespace DisertationProject.Model
         /// <summary>
         /// Suffle playlist flag
         /// </summary>
-        private bool _suffleFlag;
+        private bool suffleFlag;
+
+        /// <summary>
+        /// Suffle property
+        /// </summary>
+        public Globals.State Shuffle { get; set; }
+
+        /// <summary>
+        /// Repeat property
+        /// </summary>
+        public Globals.State Repeat { get; set; }
 
         /// <summary>
         /// Initialize
         /// </summary>
-        private void Init()
+        private void Initialize()
         {
-            _suffleFlag = false;
-            _currentPosition = 0;
-            _repeatFlag = false;
+            currentPosition = 0;
+            Shuffle = Globals.State.Off;
+            Repeat = Globals.State.Off;
         }
 
         /// <summary>
@@ -67,9 +77,9 @@ namespace DisertationProject.Model
         /// </summary>
         public Playlist()
         {
-            Init();
+            Initialize();
             SongList = new List<Song>();
-            _totalItems = 0;
+            totalItems = 0;
         }
 
         /// <summary>
@@ -78,9 +88,9 @@ namespace DisertationProject.Model
         /// <_parameter name="trackList">The tracklist</_parameter>
         public Playlist(List<Song> trackList)
         {
-            Init();
+            Initialize();
             SongList = trackList;
-            _totalItems = trackList.Count;
+            totalItems = trackList.Count;
         }
 
         /// <summary>
@@ -89,7 +99,7 @@ namespace DisertationProject.Model
         public void Add(Song item)
         {
             SongList.Add(item);
-            _totalItems++;
+            totalItems++;
         }
 
         /// <summary>
@@ -98,28 +108,28 @@ namespace DisertationProject.Model
         public void Add(List<Song> items)
         {
             SongList.AddRange(items);
-            _totalItems += items.Count();
+            totalItems += items.Count();
         }
 
         /// <summary>
-        /// Add items to playlist
+        /// Remove items from playlist
         /// </summary>
         public void Remove(Song item)
         {
             if (SongList.Any())
             {
                 SongList.Remove(item);
-                _totalItems--;
+                totalItems--;
             }
         }
 
         /// <summary>
-        /// Get current item from the playlist
+        /// Get current song from the playlist
         /// </summary>
-        /// <returns></returns>
-        public Song GetCurrentItem()
+        /// <returns>Current song</returns>
+        public Song GetCurrentSong()
         {
-            return SongList[_currentPosition];
+            return SongList[currentPosition];
         }
 
         /// <summary>
@@ -127,8 +137,8 @@ namespace DisertationProject.Model
         /// </summary>
         public void IncrementPosition()
         {
-            if (_currentPosition < _totalItems - 1)
-                _currentPosition++;
+            if (currentPosition < totalItems - 1)
+                currentPosition++;
         }
 
         /// <summary>
@@ -136,40 +146,8 @@ namespace DisertationProject.Model
         /// </summary>
         public void DecrementPosition()
         {
-            if (_currentPosition > 0)
-                _currentPosition--;
-        }
-
-        /// <summary>
-        /// Set suffle on
-        /// </summary>
-        public void SetSuffleOn()
-        {
-            _suffleFlag = true;
-        }
-
-        /// <summary>
-        /// Set suffle off
-        /// </summary>
-        public void SetSuffleOff()
-        {
-            _suffleFlag = false;
-        }
-
-        /// <summary>
-        /// Set repeat on
-        /// </summary>
-        public void SetRepeatOn()
-        {
-            _repeatFlag = true;
-        }
-
-        /// <summary>
-        /// Set repeat off
-        /// </summary>
-        public void SetRepeatOff()
-        {
-            _repeatFlag = false;
+            if (currentPosition > 0)
+                currentPosition--;
         }
 
         /// <summary>
@@ -177,7 +155,7 @@ namespace DisertationProject.Model
         /// </summary>
         public void ResetPosition()
         {
-            _currentPosition = 0;
+            currentPosition = 0;
         }
 
         /// <summary>
@@ -185,7 +163,7 @@ namespace DisertationProject.Model
         /// </summary>
         public void SetPositionToEnd()
         {
-            _currentPosition = _totalItems - 1;
+            currentPosition = totalItems - 1;
         }
 
         /// <summary>
@@ -195,7 +173,7 @@ namespace DisertationProject.Model
         public bool IsAtEnd()
         {
             var result = false;
-            if (_currentPosition == _totalItems - 1)
+            if (currentPosition == totalItems - 1)
                 result = true;
             return result;
         }
@@ -207,7 +185,7 @@ namespace DisertationProject.Model
         public bool IsAtBeggining()
         {
             var result = false;
-            if (_currentPosition == 0)
+            if (currentPosition == 0)
                 result = true;
             return result;
         }
@@ -219,7 +197,7 @@ namespace DisertationProject.Model
         public bool IsRepeatEnabled()
         {
             var result = false;
-            if (_repeatFlag)
+            if (repeatFlag)
                 result = true;
             return result;
         }
@@ -231,7 +209,7 @@ namespace DisertationProject.Model
         public bool IsSuffleEnabled()
         {
             var result = false;
-            if (_suffleFlag)
+            if (suffleFlag)
                 result = true;
             return result;
         }

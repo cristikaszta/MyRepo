@@ -3,7 +3,6 @@ using Android.Content;
 using Android.Media;
 using Android.OS;
 using System;
-using static DisertationProject.Controller.Helper;
 
 namespace DisertationProject.Controller
 {
@@ -20,12 +19,12 @@ namespace DisertationProject.Controller
         /// <summary>
         /// The audio manager
         /// </summary>
-        private AudioManager _audioManager;
+        private AudioManager audioManager;
 
         /// <summary>
         /// Is paused flag
         /// </summary>
-        private bool _isPaused;
+        private bool isPaused;
 
         /// <summary>
         /// Contructor
@@ -33,7 +32,7 @@ namespace DisertationProject.Controller
         public MusicPlayerController()
         {
             MediaPlayer = new MediaPlayer();
-            _audioManager = (AudioManager)MainActivity.Context.GetSystemService(MainActivity.Audio);
+            audioManager = (AudioManager)MainActivity.Context.GetSystemService(MainActivity.Audio);
             InitializeMediaPlayer();
         }
 
@@ -67,9 +66,8 @@ namespace DisertationProject.Controller
             MediaPlayer.Error += (sender, args) =>
             {
                 //playback error
-                //Console.WriteLine("Error in playback resetting: " + args.What);
                 Stop();//this will clean up and reset properly.
-                throw new Problem("Error in playback resetting: ");
+                throw new Exception("Error in playback resetting: ");
             };
         }
 
@@ -78,26 +76,25 @@ namespace DisertationProject.Controller
         /// </summary>
         public async void Play(string songUrl) 
         {
-            if (_isPaused)// && mediaPlayer != null)
+            if (isPaused)
             {
-                _isPaused = false;
+                isPaused = false;
                 //We are simply paused so just start again
                 MediaPlayer.Start();
                 //StartForeground();
                 return;
             }
 
-            //if (mediaPlayer == null) { InitializePlayer(); }
             if (MediaPlayer.IsPlaying) return;
 
             try
             {
                 await MediaPlayer.SetDataSourceAsync(MainActivity.Context, Android.Net.Uri.Parse(@songUrl));
-                var focusResult = _audioManager.RequestAudioFocus(this, Stream.Music, AudioFocus.Gain);
+                var focusResult = audioManager.RequestAudioFocus(this, Stream.Music, AudioFocus.Gain);
                 if (focusResult != AudioFocusRequest.Granted)
                 {
                     //could not get audio focus
-                    throw new Problem("Could not get audio focus");
+                    throw new Exception("Could not get audio focus");
                 }
                 MediaPlayer.PrepareAsync();
                 //AquireWifiLock();
@@ -108,10 +105,10 @@ namespace DisertationProject.Controller
                 //If the media player is called in an invalid state
                 throw ex;
             }
-            catch (Problem)
+            catch (Exception)
             {
                 //unable to start playback log error
-                throw new Problem("Unable to start playback log error.");
+                throw new Exception("Unable to start playback log error.");
             }
         }
 
@@ -120,12 +117,10 @@ namespace DisertationProject.Controller
         /// </summary>
         public void Pause()
         {
-            //if (MediaPlayer == null)
-            //    return;
             if (MediaPlayer.IsPlaying)
             {
                 MediaPlayer.Pause();
-                _isPaused = true;
+                isPaused = true;
             }
         }
 
@@ -134,12 +129,10 @@ namespace DisertationProject.Controller
         /// </summary>
         public void Stop()
         {
-            //if (MediaPlayer == null)
-            //    return;
             if (MediaPlayer.IsPlaying)
                 MediaPlayer.Stop();
             MediaPlayer.Reset();
-            _isPaused = false;
+            isPaused = false;
         }
 
         /// <summary>
@@ -167,12 +160,10 @@ namespace DisertationProject.Controller
             switch (focusChange)
             {
                 case AudioFocus.Gain:
-                    //if (MediaPlayer == null) InitializePlayer();
-
                     if (!MediaPlayer.IsPlaying)
                     {
                         MediaPlayer.Start();
-                        _isPaused = false;
+                        isPaused = false;
                     }
 
                     MediaPlayer.SetVolume(1.0f, 1.0f);//Turn it up!

@@ -5,28 +5,31 @@ using System.Data.SqlClient;
 
 namespace DisertationProject.Controller
 {
+    /// <summary>
+    /// Data contoller class
+    /// </summary>
     public class DataController
     {
 
         /// <summary>
         /// SQL connection
         /// </summary>
-        private SqlConnection _connection;
+        private SqlConnection connection;
 
         /// <summary>
         /// Sql command
         /// </summary>
-        private SqlCommand _command;
+        private SqlCommand command;
 
         /// <summary>
         /// Sql data _reader
         /// </summary>
-        private SqlDataReader _reader;
+        private SqlDataReader reader;
 
         /// <summary>
         /// Song list
         /// </summary>
-        private List<Song> _songList;
+        private List<Song> songList;
 
         /// <summary>
         /// Constructor
@@ -41,22 +44,24 @@ namespace DisertationProject.Controller
         /// </summary>
         private void Initialize()
         {
-            _songList = new List<Song>();
-            _command = new SqlCommand();
-            EstablishConnection();
+            songList = new List<Song>();
+            command = new SqlCommand();
+            EstablishConnection(Globals.ConnectionString);
         }
-
 
         /// <summary>
         /// Establish connection
         /// </summary>
-        private void EstablishConnection()
+        private void EstablishConnection(string connectionString)
         {
+            //SqlConnection sqlconn;
+            //string connsqlstring = string.Format("Server=tcp:ourserver.database.windows.net,1433;Data Source=ourserver.database.windows.net;Initial Catalog=ourdatabase;Persist Security Info=False;User ID=lanister;Password=tyrion0!;Pooling=False;MultipleActiveResultSets=False;Encrypt=False;Connection Timeout=30;");
+
             try
             {
-                _connection = new SqlConnection(Globals.ConnectionString);
-                _connection.Open();
-                _command = new SqlCommand("SELECT Id, Name, Artist, Source, Type FROM dbo.Songs", _connection);
+                connection = new SqlConnection(connectionString);
+                connection.Open();
+                command = new SqlCommand("SELECT Id, Name, Artist, Source, Type FROM dbo.Songs", connection);
             }
             catch (Exception ex)
             {
@@ -72,19 +77,18 @@ namespace DisertationProject.Controller
             var song = new Song();
             try
             {
-                //_command
-                _reader = _command.ExecuteReader();
-                if (_reader.HasRows)
+                reader = command.ExecuteReader();
+                if (reader.HasRows)
                 {
                     // Read advances to the next row.
-                    while (_reader.Read())
+                    while (reader.Read())
                     {
                         // To avoid unexpected bugs access columns by name.
-                        song.Id = _reader.GetInt32(_reader.GetOrdinal("Id"));
-                        song.Name = _reader.GetString(_reader.GetOrdinal("Name"));
-                        song.Artist = _reader.GetString(_reader.GetOrdinal("Artist"));
-                        song.Source = _reader.GetString(_reader.GetOrdinal("Source"));
-                        _songList.Add(song);
+                        song.Id = reader.GetInt32(reader.GetOrdinal("Id"));
+                        song.Name = reader.GetString(reader.GetOrdinal("Name"));
+                        song.Artist = reader.GetString(reader.GetOrdinal("Artist"));
+                        song.Source = reader.GetString(reader.GetOrdinal("Source"));
+                        songList.Add(song);
                     }
                 }
             }
@@ -95,13 +99,13 @@ namespace DisertationProject.Controller
         }
 
         /// <summary>
-        /// Close connection
+        /// Method for connection close
         /// </summary>
         private void CloseConnection()
         {
             try
             {
-                _connection.Close();
+                connection.Close();
             }
             catch (Exception ex)
             {

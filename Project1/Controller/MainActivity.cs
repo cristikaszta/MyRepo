@@ -1,18 +1,9 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.Locations;
 using Android.OS;
-using Android.Util;
 using Android.Widget;
 using DisertationProject.Model;
-using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using Android.Runtime;
-using System.Threading.Tasks;
-using System.Text;
-
 
 namespace DisertationProject.Controller
 {
@@ -22,56 +13,19 @@ namespace DisertationProject.Controller
     [Activity(Label = Globals.ProjectLabel, MainLauncher = true, Icon = "@drawable/ic_launcher")]
     public class MainActivity : Activity
     {
+        /// <summary>
+        /// The instance of the main activity
+        /// </summary>
+        private static MainActivity instance { get; set; }
 
-        private static MainActivity _instance { get; set; }
+        /// <summary>
+        /// Get instance of main activity
+        /// </summary>
+        /// <returns>Instance of main activity</returns>
         public static MainActivity getInstace()
         {
-            return _instance;
+            return instance;
         }
-
-        #region Location
-
-        //LOCATION
-        //public async void OnLocationChanged(Location location)
-        //{
-        //    _currentLocation = location;
-        //    if (_currentLocation == null)
-        //    {
-        //        _locationText.Text = "Unable to determine your location. Try again in a short while.";
-        //    }
-        //    else
-        //    {
-        //        _locationText.Text = string.Format("{0:f6},{1:f6}", _currentLocation.Latitude, _currentLocation.Longitude);
-        //        Address address = await ReverseGeocodeCurrentLocation();
-        //        DisplayAddress(address);
-
-        //    }
-        //}
-
-        //public void OnProviderDisabled(string provider) { }
-
-        //public void OnProviderEnabled(string provider) { }
-
-        //public void OnStatusChanged(string provider, Availability status, Bundle extras)
-        //{
-        //    Log.Debug(TAG, "{0}, {1}", provider, status);
-        //}
-
-        //static readonly string TAG = "X:" + typeof(Activity).Name;
-        //TextView _addressText;
-        //Location _currentLocation;
-        //LocationManager _locationManager;
-
-        //string _locationProvider;
-        //TextView _locationText;
-
-        //SqlConnection sqlconn;
-        //string connsqlstring = string.Format("Server=tcp:ourserver.database.windows.net,1433;Data Source=ourserver.database.windows.net;Initial Catalog=ourdatabase;Persist Security Info=False;User ID=lanister;Password=tyrion0!;Pooling=False;MultipleActiveResultSets=False;Encrypt=False;Connection Timeout=30;");
-
-        #endregion
-
-        //SqlConnection sqlconn;
-        //string connsqlstring = string.Format("Server=tcp:ourserver.database.windows.net,1433;Data Source=ourserver.database.windows.net;Initial Catalog=ourdatabase;Persist Security Info=False;User ID=lanister;Password=tyrion0!;Pooling=False;MultipleActiveResultSets=False;Encrypt=False;Connection Timeout=30;");
 
         /// <summary>
         /// Main activity context
@@ -97,46 +51,33 @@ namespace DisertationProject.Controller
         /// Dictionary of the buttons;
         /// Each item contains a key and a value
         /// </summary>
-        private IDictionary<int, Button> _buttons;
+        private IDictionary<int, Button> buttons;
 
         /// <summary>
         /// Broadcast receiver fro the music service
         /// </summary>
-        private MusicServiceListener _receiver;
-
-        private VisualFeedbackController _visualFeedbackController;
-
-        //private TextView _errorTextBox;
+        private MusicServiceListener receiver;
 
         /// <summary>
-        /// Object initialization method
+        /// Text controller used to controller text in text containers
+        /// </summary>
+        private TextController textCotroller;
+
+        /// <summary>
+        /// Initialization method
         /// </summary>
         private void Initialize()
         {
-            //Connect to DB
-            //try
-            //{
-            //    sqlconn = new SqlConnection(connsqlstring);
-
-            //    sqlconn.Open();
-            //}
-            //catch (Exception e)
-            //{
-
-            //}
-
             Context = ApplicationContext;
             Connectivity = ConnectivityService;
             Wifi = WifiService;
             Audio = AudioService;
 
-            _buttons = new Dictionary<int, Button>();
-            //_errorTextBox = (TextView)FindViewById(Globals.ErrorTextBox);
-            SetupButtons();
-
+            buttons = new Dictionary<int, Button>();
+            textCotroller = new TextController(instance);
+            receiver = new MusicServiceListener();
 
         }
-
 
         /// <summary>
         /// On create method
@@ -148,21 +89,17 @@ namespace DisertationProject.Controller
             // Set our view from the "main" layout resource
             SetContentView(Globals.MainLayoutId);
             //Set instance
-            _instance = this;
-            //LOCATION
-            //_addressText = FindViewById<TextView>(Resource.Id.address_text);
-            //_locationText = FindViewById<TextView>(Resource.Id.location_text);
-            //FindViewById<TextView>(Resource.Id.get_address_button).Click += AddressButton_OnClick;
-
-            //InitializeLocationManager();
+            instance = this;
 
             Initialize();
-            _visualFeedbackController = new VisualFeedbackController(_instance);
-            _receiver = new MusicServiceListener();
-            var _intentFilter = new IntentFilter(Globals.TheAction);
-            //_intentFilter.AddAction(Globals.TheAction);
-            RegisterReceiver(_receiver, _intentFilter);
+            SetupButtons();
 
+            var intentFilter = new IntentFilter();
+            //intentFilter.AddAction(Globals.TestAction);
+            intentFilter.AddAction(Globals.NetworkOffline);
+            //intentFilter.AddAction(Globals.TheAction);
+            RegisterReceiver(receiver, intentFilter);
+            textCotroller.Initialize();
         }
 
         /// <summary>
@@ -179,176 +116,56 @@ namespace DisertationProject.Controller
                Globals.NextButtonId,
             };
             //Create the dictionaries
-            Helper.addItemToDictionary<int, Button>(_buttons, buttonList, FindViewById<Button>);
-            Helper.addItemToDictionary<int, Button>(_buttons, Globals.RepeatButtonId, FindViewById<ToggleButton>);
+            Helper.addItemToDictionary<int, Button>(buttons, buttonList, FindViewById<Button>);
+            Helper.addItemToDictionary<int, Button>(buttons, Globals.RepeatButtonId, FindViewById<ToggleButton>);
 
             //Set click action
-            _buttons[Globals.PlayButtonId].Click += (sender, args) => SendCommand(Globals.ActionPlay);
-            _buttons[Globals.PauseButtonId].Click += (sender, args) => SendCommand(Globals.ActionPause);
-            _buttons[Globals.StopButtonId].Click += (sender, args) => SendCommand(Globals.ActionStop);
-            _buttons[Globals.PreviousButtonId].Click += (sender, args) => SendCommand(Globals.ActionPrevious);
-            _buttons[Globals.NextButtonId].Click += (sender, args) => SendCommand(Globals.ActionNext);
-            _buttons[Globals.RepeatButtonId].Click += (sender, args) =>
+            buttons[Globals.PlayButtonId].Click += (sender, args) => SendCommand(Globals.ActionPlay);
+            buttons[Globals.PauseButtonId].Click += (sender, args) => SendCommand(Globals.ActionPause);
+            buttons[Globals.StopButtonId].Click += (sender, args) => SendCommand(Globals.ActionStop);
+            buttons[Globals.PreviousButtonId].Click += (sender, args) => SendCommand(Globals.ActionPrevious);
+            buttons[Globals.NextButtonId].Click += (sender, args) => SendCommand(Globals.ActionNext);
+            buttons[Globals.RepeatButtonId].Click += (sender, args) =>
             {
-                if (((ToggleButton)_buttons[Globals.RepeatButtonId]).Checked) SendCommand(Globals.ActionRepeatOn);
+                if (((ToggleButton)buttons[Globals.RepeatButtonId]).Checked) SendCommand(Globals.ActionRepeatOn);
                 else SendCommand(Globals.ActionRepeatOff);
             };
-
-            //Long click to test the get song by id
-            //_buttons[Globals.PlayButtonId].LongClick += (sender, args) => MainActivity_LongClick(16);
         }
 
         /// <summary>
         /// Set _command method
         /// </summary>
-        /// <_parameter name="action">The action</_parameter>
+        /// <_parameter name="action">The action that is intended</_parameter>
         private void SendCommand(string action)
         {
-           // _errorTextBox.Text = "Playing";
-            var _intent = new Intent(action);
-            StartService(_intent);
+            var intent = new Intent(action);
+            textCotroller.RefreshList();
+            Context.StartService(intent);
         }
 
-        #region Location
-
-        //LOCATION
-        //protected override void OnResume()
-        //{
-        //    base.OnResume();
-        //    _locationManager.RequestLocationUpdates(_locationProvider, 0, 0, this);
-        //    Log.Debug(TAG, "Listening for location updates using " + _locationProvider + ".");
-        //}
-
-        //protected override void OnPause()
-        //{
-        //    base.OnPause();
-        //    _locationManager.RemoveUpdates(this);
-        //    Log.Debug(TAG, "No longer listening for location updates.");
-        //}
-
-        //void InitializeLocationManager()
-        //{
-        //    _locationManager = (LocationManager)GetSystemService(LocationService);
-        //    Criteria criteriaForLocationService = new Criteria
-        //    {
-        //        Accuracy = Accuracy.Fine
-        //    };
-        //    IList<string> acceptableLocationProviders = _locationManager.GetProviders(criteriaForLocationService, true);
-
-        //    if (acceptableLocationProviders.Any())
-        //    {
-        //        _locationProvider = acceptableLocationProviders.First();
-        //    }
-        //    else
-        //    {
-        //        _locationProvider = string.Empty;
-        //    }
-        //    Log.Debug(TAG, "Using " + _locationProvider + ".");
-        //}
-
-
-
-        //LOCATION
-        //async void AddressButton_OnClick(object sender, EventArgs eventArgs)
-        //{
-        //    if (_currentLocation == null)
-        //    {
-        //        _addressText.Text = "Can't determine the current address. Try again in a few minutes.";
-        //        return;
-        //    }
-
-        //    Address address = await ReverseGeocodeCurrentLocation();
-        //    DisplayAddress(address);
-        //}
-
-        //async Task<Address> ReverseGeocodeCurrentLocation()
-        //{
-        //    Geocoder geocoder = new Geocoder(this);
-        //    IList<Address> addressList =
-        //        await geocoder.GetFromLocationAsync(_currentLocation.Latitude, _currentLocation.Longitude, 10);
-
-        //    Address address = addressList.FirstOrDefault();
-        //    return address;
-        //}
-
-        //void DisplayAddress(Address address)
-        //{
-        //    if (address != null)
-        //    {
-        //        StringBuilder deviceAddress = new StringBuilder();
-        //        for (int i = 0; i < address.MaxAddressLineIndex; i++)
-        //        {
-        //            deviceAddress.AppendLine(address.GetAddressLine(i));
-        //        }
-        //        // Remove the last comma from the end of the address.
-        //        _addressText.Text = deviceAddress.ToString();
-        //    }
-        //    else
-        //    {
-        //        _addressText.Text = "Unable to determine the address. Try again in a few minutes.";
-        //    }
-        //}
-
-        //private void MainActivity_LongClick(int playListId)
-        //{
-        //    GetSong(playListId);
-        //}
-
-
-        // _connection.Close();
-
-
-        //WORK IN PROGRESS TO PLAY VIDEO FROM YOUTUBE LINK (HARCODED FOR NOW)
-        //I THINK IT DOES NOT WORK IN MY EMULATOR , PLEASE TRY DIRECTLY IN THE PHONE
-
-        //Obtain a reference to the VideoView in code.
-        // var videoView = FindViewById<VideoView>(Resource.Id.YoutubeVideoView);
-        // Create an Android.Net.Uri for the video.
-        //var uri = Android.Net.Uri.Parse("rtsp://r2---sn-a5m7zu76.c.youtube.com/Ck0LENy73wIaRAnTmlo5oUgpQhMYESARFEgGUg5yZWNvbW1lbmRhdGlvbnIhAWL2kyn64K6aQtkZVJdTxRoO88HsQjpE1a8d1GxQnGDmDA==/0/0/0/video.3gp");
-        // Pass this Uri to the VideoView.
-        //videoView.SetVideoURI(uri);
-        // Start the VideoView.
-        //videoView.RequestFocus();
-        //videoView.Start();
-
-        //public void OnLocationChanged(Location location)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public void OnProviderDisabled(string provider)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public void OnProviderEnabled(string provider)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public void OnStatusChanged(string provider, [GeneratedEnum] Availability status, Bundle extras)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        #endregion
-
+        /// <summary>
+        /// Override OnDestroy method
+        /// </summary>
         protected override void OnDestroy()
         {
-            UnregisterReceiver(_receiver);
+            UnregisterReceiver(receiver);
             base.OnDestroy();
         }
 
+        /// <summary>
+        /// Override OnPause method
+        /// </summary>
         protected override void OnPause()
         {
-            UnregisterReceiver(_receiver);
+            UnregisterReceiver(receiver);
             base.OnPause();
         }
 
         public void SetButtonText(string text)
         {
             //_errorTextBox.Text = text;
-            _visualFeedbackController.TextContainer.SetText("It's ok");
+            //textCotroller.TextContainer.SetText("It's ok");
+           
         }
     }
 
@@ -356,25 +173,31 @@ namespace DisertationProject.Controller
     /// Broadcast receiver class which is used to listen to messages from the music service
     /// </summary>
     [BroadcastReceiver]
-    [IntentFilter(new[] { Globals.TheAction })]
+    [IntentFilter(new[] { Globals.TestAction, Globals.NetworkOffline, Globals.IllegalStateException })]
     public class MusicServiceListener : BroadcastReceiver
     {
         /// <summary>
         /// Method which handles the received intent
         /// </summary>
-        /// <param name="context"></param>
-        /// <param name="intent"></param>
+        /// <param name="context">The context in which it is used</param>
+        /// <param name="intent">The intent</param>
         public override void OnReceive(Context context, Intent intent)
         {
+            string text;
             switch (intent.Action)
             {
-                case Globals.TheAction:
-                    var text = "It's ok";
-                    MainActivity.getInstace().SetButtonText(text);
-                    InvokeAbortBroadcast();
+                case Globals.TestAction:
+                    text = "It's ok";
+                    break;
+                case Globals.NetworkOffline:
+                    text = "Network is Offline";
+                    break;
+                default:
+                    text = "don't know ?";
                     break;
             }
-
+            //MainActivity.getInstace().SetButtonText(text);
+            InvokeAbortBroadcast();
         }
     }
 }

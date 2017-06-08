@@ -15,8 +15,8 @@
     <AndroidApplication>true</AndroidApplication>
     <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <AndroidUseLatestPlatformSdk>False</AndroidUseLatestPlatformSdk>
-    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
+    <AndroidUseLatestPlatformSdk>True</AndroidUseLatestPlatformSdk>
+    <TargetFrameworkVersion>v6.0</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -58,8 +58,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\SongListAdapter.cs" />
-    <Compile Include="Model\Helper.cs" />
+    <Compile Include="Controller\Helper.cs" />
     <Compile Include="Controller\DataController.cs" />
     <Compile Include="Controller\LocationController.cs" />
     <Compile Include="Controller\MusicPlayerController.cs" />
@@ -67,10 +66,9 @@
     <Compile Include="Controller\NetworkController.cs" />
     <Compile Include="Controller\TextController.cs" />
     <Compile Include="Model\Playlist.cs" />
-    <Compile Include="Model\Song.cs" />
+    <Compile Include="Model\Songs.cs" />
     <Compile Include="Model\Globals.cs" />
     <Compile Include="Controller\MainActivity.cs" />
-    <Compile Include="Model\TextContainer.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -96,9 +94,7 @@
     <AndroidResource Include="Resources\drawable\Icon.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\AndroidManifest.xml">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UserInterface\" />
