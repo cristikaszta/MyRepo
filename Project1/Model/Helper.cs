@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Android.Widget;
 using Emotion = DisertationProject.Model.Globals.Emotions;
 
 namespace DisertationProject.Controller
@@ -32,7 +33,7 @@ namespace DisertationProject.Controller
         /// <param name="value">The value</param>
         public static void addItemToDictionary<T1, T2>(IDictionary<T1, T2> dictionary, List<T1> key, Func<T1, T2> value)
         {
-            foreach (var item in key) dictionary.Add(item, (T2)value(item));
+            foreach (var item in key) dictionary.Add(item, value(item));
         }
 
         /// <summary>
@@ -47,6 +48,20 @@ namespace DisertationProject.Controller
         {
             dictionary.Add(key, value);
         }
+
+        /// <summary>
+        /// Find by id method used to find views
+        /// </summary>
+        /// <typeparam name="T">Type of object</typeparam>
+        /// <param name="id">Id of the view</param>
+        /// <param name="del">Delegate method used to find view</param>
+        /// <returns>The object</returns>
+        public static T findById<T>(int id, Func<int, T> del)
+        {
+            T x = del(id);
+            return x;
+        }
+
 
         #region Converters
 
@@ -68,6 +83,8 @@ namespace DisertationProject.Controller
             }
             return result;
         }
+
+
 
         /// <summary>
         /// Convert emotion enum to string text

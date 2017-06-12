@@ -1,3 +1,6 @@
+using Android.App;
+using Android.Widget;
+using DisertationProject.Controller;
 
 namespace DisertationProject.Model
 {
@@ -21,39 +24,55 @@ namespace DisertationProject.Model
         public const int SongListView = Resource.Id.songListView;
 
         //Actions
-        public const string ActionPlay = "com.xamarin.action.PLAY";
-        public const string ActionPause = "com.xamarin.action.PAUSE";
-        public const string ActionStop = "com.xamarin.action.STOP";
-        public const string ActionPrevious = "com.xamarin.action.PREVIOUS";
-        public const string ActionNext = "com.xamarin.action.NEXT";
-        public const string ActionRepeatOn = "REPEAT_ON";
-        public const string ActionRepeatOff = "REPEAT_OFF";
+        public static class ActionEvent
+        {
+            public const string ActionPlay = "PLAY";
+            public const string ActionPause = "PAUSE";
+            public const string ActionStop = "ActionSTOP";
+            public const string ActionPrevious = "PREVIOUS";
+            public const string ActionNext = "NEXT";
+            public const string ActionRepeatOn = "REPEAT_ON";
+            public const string ActionRepeatOff = "REPEAT_OFF";
+            public const string ActionShuffleOn = "SHUFFLE_ON";
+            public const string ActionShuffleOff = "SHUFFLE_OFF";
+        }
 
         //Errors
-        public const string TestAction = "123434";
-        public const string GeneralException = "GeneralException";
-        public const string IllegalStateException = "IllegalStateException";
-        public const string NetworkOffline = "NetworkOffline";
-        public const string DatabaseError = "DatabaseError";
+        public static class Errors
+        {
+            internal const string GeneralException = "GeneralException";
+            internal const string IllegalStateException = "IllegalStateException";
+            internal const string NetworkOffline = "NetworkOffline";
+            internal const string DatabaseError = "DatabaseError";
+        }
+
+        //Play state
+        public static class PlayState
+        {
+            internal const string Playing = "Playing";
+            internal const string Stopped = "Stopped";
+            internal const string Paused = "Paused";
+
+        }
 
         //Labels
         public const string ProjectLabel = "DisertationProject";
 
-        //Sample congs
-        // do not use public const string SampleSong1 = @"http://www.montemagno.com/sample.mp3";
-        public const string SampleSong2 = @"http://www.tonycuffe.com/mp3/tail%20toddle.mp3";
-        public const string SampleSong3 = @"http://www.tonycuffe.com/mp3/saewill_lo.mp3";
-        public const string SampleSong4 = @"http://www.stephaniequinn.com/Music/Commercial%20DEMO%20-%2012.mp3";
-        public const string SampleSong5 = @"http://www.stephaniequinn.com/Music/Commercial%20DEMO%20-%2004.mp3";
-        public const string SampleSong6 = @"http://www.stephaniequinn.com/Music/Commercial%20DEMO%20-%2001.mp3";
-        public const string SampleSong7 = @"http://www.tonycuffe.com/mp3/girlwho.mp3";
-        public const string SampleSong8 = @"http://www.tonycuffe.com/mp3/cairnomount.mp3";
-        public const string SampleSong9 = @"http://www.tonycuffe.com/mp3/pipers%20hut.mp3";
+        public static class Songs
+        {
+            //URL
+            public const string SampleSong1 = @"http://www.noiseaddicts.com/samples_1w72b820/4353.mp3";
+
+            //MP3
+            public const int SampleSong10 = Resource.Raw.Jessica_Jay_Casablanca;
+            public const int SampleSong11 = Resource.Raw.Vaya_Con_Dios_Puerto_Rico;
+        }
 
         //Enumerations
         public enum Emotions { Sad, Happy, Neutral, Angry }
         public enum TextType { Info, Warning, Error }
-        public enum PlayState { Playing, Stopped, Paused }
         public enum State { On, Off }
+
     }
+
 }

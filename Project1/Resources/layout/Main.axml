@@ -8,7 +8,7 @@
     <LinearLayout
         android:id="@+id/linearLayout4"
         android:orientation="horizontal"
-        android:layout_width="230.5dp"
+        android:layout_width="fill_parent"
         android:layout_height="230.5dp"
         android:layout_gravity="center_horizontal"
         android:background="#230045">
@@ -28,29 +28,20 @@
             android:layout_marginRight="155.0dp" />-->
     </LinearLayout>
     <LinearLayout
-        android:id="@+id/linearLayout1"
+        android:id="@+id/linearLayout3"
         android:orientation="horizontal"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal">
-        <Button
-            android:id="@+id/playButton"
-            android:text="@string/playText"
-            android:drawableTop="@drawable/ic_av_play"
-            style="@style/ButtonStyle" />
-        <Button
-            android:id="@+id/pauseButton"
-            android:text="@string/pauseText"
-            android:drawableTop="@drawable/ic_av_pause"
-            style="@style/ButtonStyle" />
-        <Button
-            android:id="@+id/stopButton"
-            android:text="@string/stopText"
-            android:drawableTop="@drawable/ic_av_stop"
-            style="@style/ButtonStyle" />
+        <SeekBar
+            android:id="@+id/songPositionSeekBar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="0" />
     </LinearLayout>
     <LinearLayout
-        android:id="@+id/linearLayout2"
+        android:id="@+id/linearLayout1"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -61,10 +52,33 @@
             android:drawableTop="@drawable/ic_av_previous"
             style="@style/ButtonStyle" />
         <Button
+            android:id="@+id/playButton"
+            android:text="@string/playText"
+            android:drawableTop="@drawable/ic_av_play"
+            style="@style/ButtonStyle"
+            android:layout_marginBottom="0.0dp" />
+        <Button
+            android:id="@+id/pauseButton"
+            android:text="@string/pauseText"
+            android:drawableTop="@drawable/ic_av_pause"
+            style="@style/ButtonStyle" />
+        <Button
+            android:id="@+id/stopButton"
+            android:text="@string/stopText"
+            android:drawableTop="@drawable/ic_av_stop"
+            style="@style/ButtonStyle" />
+        <Button
             android:id="@+id/nextButton"
             android:text="@string/nextText"
             android:drawableTop="@drawable/ic_av_next"
             style="@style/ButtonStyle" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
         <ToggleButton
             android:id="@+id/repeatButton"
             android:textOff="@string/repeatOffText"
@@ -72,6 +86,13 @@
             style="@style/ButtonStyle"
             android:checked="false"
             android:drawableTop="@drawable/repeatToggleSelector" />
+        <ToggleButton
+            android:id="@+id/shuffleButton"
+            android:textOff="@string/shuffleOffText"
+            android:textOn="@string/shuffleOnText"
+            style="@style/ButtonStyle"
+            android:checked="false"
+            android:drawableTop="@drawable/shuffleToggleSelector" />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/linearLayout3"
@@ -83,7 +104,6 @@
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No errors"
             android:textColor="@color/black"
             android:textSize="20sp" />
     </LinearLayout>
@@ -133,4 +153,9 @@
             android:max="100"
             android:progress="0" />
     </LinearLayout>-->
+    <WebView
+        android:layout_width="match_parent"
+        android:layout_height="155.0dp"
+        android:id="@+id/webView1"
+        android:layout_marginBottom="140.5dp" />
 </LinearLayout>

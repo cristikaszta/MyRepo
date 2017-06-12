@@ -9,5 +9,7 @@
   <string name="suffleText">Suffle</string>
   <string name="repeatOnText">Repeat On</string>
   <string name="repeatOffText">Repeat Off</string>
+  <string name="shuffleOnText">Shuffle On</string>
+  <string name="shuffleOffText">Shuffle Off</string>
   <string name="mp3_url">Enter mp3 url</string>
 </resources>

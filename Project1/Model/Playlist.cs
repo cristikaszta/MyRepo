@@ -28,11 +28,6 @@ namespace DisertationProject.Model
         public string PlayListName { get; set; }
 
         /// <summary>
-        /// Repeat flag
-        /// </summary>
-        private bool repeatFlag;
-
-        /// <summary>
         /// The total items in the playlist
         /// </summary>
         private int totalItems;
@@ -48,11 +43,6 @@ namespace DisertationProject.Model
         public List<Song> SongList;
 
         /// <summary>
-        /// Suffle playlist flag
-        /// </summary>
-        private bool suffleFlag;
-
-        /// <summary>
         /// Suffle property
         /// </summary>
         public Globals.State Shuffle { get; set; }
@@ -61,6 +51,33 @@ namespace DisertationProject.Model
         /// Repeat property
         /// </summary>
         public Globals.State Repeat { get; set; }
+
+        /// <summary>
+        /// Check if posiion is at end
+        /// </summary>
+        public bool IsAtEnd
+        {
+            get
+            {
+                if (currentPosition == totalItems - 1)
+                    return true;
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Check if position is at beggining
+        /// </summary>
+        public bool IsAtBeggining
+        {
+            get
+            {
+                if (currentPosition == 0)
+                    return true;
+                return false;
+            }
+
+        }
 
         /// <summary>
         /// Initialize
@@ -164,54 +181,6 @@ namespace DisertationProject.Model
         public void SetPositionToEnd()
         {
             currentPosition = totalItems - 1;
-        }
-
-        /// <summary>
-        /// Check if playlist is at the end
-        /// </summary>
-        /// <returns>True of playlist is at the end and false otherwise</returns>
-        public bool IsAtEnd()
-        {
-            var result = false;
-            if (currentPosition == totalItems - 1)
-                result = true;
-            return result;
-        }
-
-        /// <summary>
-        /// Check if playlist is at the beggining
-        /// </summary>
-        /// <returns>True of playlist is at the beggining and false otherwise</returns>
-        public bool IsAtBeggining()
-        {
-            var result = false;
-            if (currentPosition == 0)
-                result = true;
-            return result;
-        }
-
-        /// <summary>
-        /// Check if repeat flag is on
-        /// </summary>
-        /// <returns>Return true if repeat flag is on and false otherwise</returns>
-        public bool IsRepeatEnabled()
-        {
-            var result = false;
-            if (repeatFlag)
-                result = true;
-            return result;
-        }
-
-        /// <summary>
-        /// Check if suffle flag is on
-        /// </summary>
-        /// <returns>Return true if suffle flag is on and false otherwise</returns>
-        public bool IsSuffleEnabled()
-        {
-            var result = false;
-            if (suffleFlag)
-                result = true;
-            return result;
         }
     }
 }

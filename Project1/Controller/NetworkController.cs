@@ -1,3 +1,4 @@
+using Android.App;
 using Android.Net;
 using Android.Net.Wifi;
 
@@ -14,16 +15,6 @@ namespace DisertationProject.Controller
         private ConnectivityManager connectivityManager;
 
         /// <summary>
-        /// Mobile network information
-        /// </summary>
-        private NetworkInfo mobileInfo;
-
-        /// <summary>
-        /// Wifi info
-        /// </summary>
-        private NetworkInfo wifiInfo;
-
-        /// <summary>
         /// Wifi manager
         /// </summary>
         private WifiManager wifiManager;
@@ -33,24 +24,30 @@ namespace DisertationProject.Controller
         /// </summary>
         private WifiManager.WifiLock wifiLock;
 
+
+        /// <summary>
+        /// Check is connected to the network
+        /// </summary>
+        public bool IsConnected
+        {
+            get
+            {
+                if (connectivityManager.GetNetworkInfo(ConnectivityType.Wifi).IsConnected ||
+                    connectivityManager.GetNetworkInfo(ConnectivityType.Mobile).IsConnected)
+                    return true;
+                else
+                    return false;
+            }
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>
         public NetworkController()
         {
-            wifiManager = (WifiManager)MainActivity.Context.GetSystemService(MainActivity.Wifi);
-            connectivityManager = (ConnectivityManager)MainActivity.Context.GetSystemService(MainActivity.Connectivity);
+            wifiManager = (WifiManager)Application.Context.GetSystemService(Android.Content.Context.WifiService);
+            connectivityManager = (ConnectivityManager)Application.Context.GetSystemService(Android.Content.Context.ConnectivityService);
             wifiLock = wifiManager.CreateWifiLock(WifiMode.Full, "Wifi lock");
-            RefreshNetworkInfo();
-        }
-
-        /// <summary>
-        /// Refresh the network info to get the status of the connection
-        /// </summary>
-        private void RefreshNetworkInfo()
-        {
-            wifiInfo = connectivityManager.GetNetworkInfo(ConnectivityType.Wifi);
-            mobileInfo = connectivityManager.GetNetworkInfo(ConnectivityType.Mobile);
         }
 
         /// <summary>
@@ -71,18 +68,6 @@ namespace DisertationProject.Controller
                 wifiLock.Release();
         }
 
-        /// <summary>
-        /// Check if connected to internet
-        /// </summary>
-        /// <returns>True if connected to internet and false otherwise</returns>
-        public bool IsOnline()
-        {
-            RefreshNetworkInfo();
-            if (wifiInfo.IsConnected || mobileInfo.IsConnected)
-                return true;
-            else
-                return false;
-        }
 
     }
 }
