@@ -17,15 +17,6 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:background="#000000" />
-    <!--<TextView
-            android:text="Empty"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView1"
-            android:layout_marginBottom="188.5dp"
-            android:layout_marginRight="155.0dp" />-->
     </LinearLayout>
     <LinearLayout
         android:id="@+id/linearLayout3"
@@ -40,7 +31,7 @@
             android:max="100"
             android:progress="0" />
     </LinearLayout>
-    <LinearLayout
+<LinearLayout
         android:id="@+id/linearLayout1"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
@@ -153,9 +144,4 @@
             android:max="100"
             android:progress="0" />
     </LinearLayout>-->
-    <WebView
-        android:layout_width="match_parent"
-        android:layout_height="155.0dp"
-        android:id="@+id/webView1"
-        android:layout_marginBottom="140.5dp" />
 </LinearLayout>

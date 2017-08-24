@@ -1,7 +1,3 @@
-using Android.App;
-using Android.Widget;
-using DisertationProject.Controller;
-
 namespace DisertationProject.Model
 {
     /// <summary>

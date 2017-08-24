@@ -178,9 +178,6 @@ namespace DisertationProject
 			// aapt resource value: 0x7f08000d
 			public const int textView1 = 2131230733;
 			
-			// aapt resource value: 0x7f08000e
-			public const int webView1 = 2131230734;
-			
 			static Id()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();

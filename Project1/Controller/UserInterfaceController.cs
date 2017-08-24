@@ -1,9 +1,9 @@
 using Android.App;
+using Android.Content;
+using Android.OS;
 using Android.Widget;
 using DisertationProject.Model;
 using System.Collections.Generic;
-using Android.Content;
-using Android.OS;
 
 namespace DisertationProject.Controller
 {
