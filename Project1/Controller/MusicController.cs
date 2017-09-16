@@ -6,6 +6,8 @@ using DisertationProject.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static DisertationProject.Model.Globals;
+using State = DisertationProject.Model.Globals.State;
 
 namespace DisertationProject.Controller
 {
@@ -13,9 +15,9 @@ namespace DisertationProject.Controller
     /// Music service controller
     /// </summary>
     [Service]
-    [IntentFilter(new[] { Globals.ActionEvent.ActionPlay,     Globals.ActionEvent.ActionPause, Globals.ActionEvent.ActionStop,
-                          Globals.ActionEvent.ActionPrevious, Globals.ActionEvent.ActionNext,
-                          Globals.ActionEvent.ActionRepeatOn, Globals.ActionEvent.ActionRepeatOff })]
+    [IntentFilter(new[] {"ActionPlay",   "ActionPause", "ActionStop",
+                          "ActionPrevious","ActionNext",
+                          "ActionRepeatOn","ActionRepeatOff" })]
     public class MusicController : Service, AudioManager.IOnAudioFocusChangeListener
     {
         /// <summary>
@@ -71,7 +73,7 @@ namespace DisertationProject.Controller
         /// <summary>
         /// State
         /// </summary>
-        public string State { get; private set; }
+        public State State { get; private set; }
 
         /// <summary>
         /// On bind
@@ -88,7 +90,6 @@ namespace DisertationProject.Controller
         {
             base.OnCreate();
             networkController = new NetworkController();
-            //dataController = new DataController();
             InitializeMediaPlayer();
             PlayList = new Playlist();
             SetupPlaylist();
@@ -119,45 +120,27 @@ namespace DisertationProject.Controller
         }
 
         /// <summary>
-        /// Initialize
-        /// </summary>
-        //private void Initialize()
-        //{
-        //    dataController = new DataController();
-        //    //Playlist = new Playlist();
-        //    networkController = new NetworkController();
-        //    //musicPlayer = new MusicPLayer();
-
-        //    //Make the music player play the next song automatically
-        //    musicPlayer.MediaPlayer.Completion += (sender, args) => Next();
-        //    //When we have error in the media player
-        //    musicPlayer.MediaPlayer.Error += (sender, args) =>
-        //    {
-        //        //StartForeground("Error in media player", "");
-        //        // t.Text = "Error in media player";
-        //        Stop();
-        //    };
-        //}
-
-        /// <summary>
         /// Setup playlist
         /// </summary>
         private void SetupPlaylist()
         {
             var songList = new List<Song>
             {
-                new Song { Artist = "Artist1", Name = "SongName", Emotion = Globals.Emotions.Happy, Source = Globals.Songs.SampleSong1},
+                new Song { Artist = "Trumpet", Name = "March", Emotion = Emotions.Happy, Source = Songs.SampleSong1},
+                new Song { Artist = "Russia", Name = "Katyusha", Emotion = Emotions.Happy, Source = Songs.SampleSong2},
+                new Song { Artist = "America", Name = "Yankee Doodle Dandy", Emotion = Emotions.Happy, Source = Songs.SampleSong3},
+                new Song { Artist = "Romania", Name = "National Anthem", Emotion = Emotions.Happy, Source = Songs.SampleSong4}
             };
 
             PlayList.Add(songList);
 
-            songList = PlayList.SongList.Where(p => p.Emotion == Globals.Emotions.Happy).Select(p => p).ToList();
+            songList = PlayList.SongList.Where(p => p.Emotion == Emotions.Happy).Select(p => p).ToList();
             HappyPlaylist = new Playlist(songList);
 
-            songList = PlayList.SongList.Where(p => p.Emotion == Globals.Emotions.Neutral).Select(p => p).ToList();
+            songList = PlayList.SongList.Where(p => p.Emotion == Emotions.Neutral).Select(p => p).ToList();
             NeutralPlaylist = new Playlist(songList);
 
-            songList = PlayList.SongList.Where(p => p.Emotion == Globals.Emotions.Sad).Select(p => p).ToList();
+            songList = PlayList.SongList.Where(p => p.Emotion == Emotions.Sad).Select(p => p).ToList();
             SadPlaylist = new Playlist(songList);
 
         }
@@ -171,30 +154,21 @@ namespace DisertationProject.Controller
         /// <returns>Start command result</returns>
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-            switch (intent.Action)
+            var action = Helper.ConvertActionEvent(intent.Action);
+            switch (action)
             {
-                case Globals.ActionEvent.ActionPlay: Play(); break;
-                case Globals.ActionEvent.ActionStop: Stop(); break;
-                case Globals.ActionEvent.ActionPause: Pause(); break;
-                case Globals.ActionEvent.ActionPrevious: Previous(); break;
-                case Globals.ActionEvent.ActionNext: Next(); break;
-                case Globals.ActionEvent.ActionRepeatOn: ToggleRepeat(Globals.State.On); break;
-                case Globals.ActionEvent.ActionRepeatOff: ToggleRepeat(Globals.State.Off); break;
+                case ActionEvent.ActionPlay: Play(); break;
+                case ActionEvent.ActionStop: Stop(); break;
+                case ActionEvent.ActionPause: Pause(); break;
+                case ActionEvent.ActionPrevious: Previous(); break;
+                case ActionEvent.ActionNext: Next(); break;
+                case ActionEvent.ActionRepeatOn: ToggleRepeat(State.On); break;
+                case ActionEvent.ActionRepeatOff: ToggleRepeat(State.Off); break;
             }
             //Set sticky as we are a long running operation
             return StartCommandResult.Sticky;
         }
 
-
-        /// <summary>
-        /// Send command
-        /// </summary>
-        /// <param name="action">The intended ation</param>
-        public void SendCommand(string action)
-        {
-            var intent = new Intent(action);
-            Application.Context.StartService(intent);
-        }
 
         /// <summary>
         /// Play song method
@@ -206,9 +180,8 @@ namespace DisertationProject.Controller
             {
                 try
                 {
-                    SendCommand(Globals.PlayState.Playing);
                     Play(PlayList.GetCurrentSong().Source);
-                    //StartForeground("Playing ",PlayList.GetCurrentSong().Artist, PlayList.GetCurrentSong().Name);
+                    StartForeground("Playing ", PlayList.GetCurrentSong().Artist, PlayList.GetCurrentSong().Name);
                     networkController.AquireWifiLock();
                 }
                 catch (Java.Lang.IllegalStateException)
@@ -223,25 +196,27 @@ namespace DisertationProject.Controller
             else //network is not online
             {
                 Stop();
-                SendCommand(Globals.Errors.NetworkOffline);
             }
         }
 
-        private async void Play(string songUrl)
+        private async void Play(string uri)
         {
-            if (State == Globals.PlayState.Paused)
+            if (State == State.Paused)
             {
                 MediaPlayer.Start();
-                State = Globals.PlayState.Playing;
+                State = State.Playing;
                 //StartForeground();
                 return;
             }
 
             if (MediaPlayer.IsPlaying) return;
 
+            Uri uri2 = new Uri("https://www.youtube.com/watch?v=n4RjJKxsamQ&list=RDMMn4RjJKxsamQ");
+
             try
             {
-                await MediaPlayer.SetDataSourceAsync(Application.Context, Android.Net.Uri.Parse(@songUrl));
+
+                await MediaPlayer.SetDataSourceAsync(Application.Context, Android.Net.Uri.Parse(uri));
                 var focusResult = audioManager.RequestAudioFocus(this, Stream.Music, AudioFocus.Gain);
                 if (focusResult != AudioFocusRequest.Granted)
                 {
@@ -249,7 +224,7 @@ namespace DisertationProject.Controller
                     throw new Exception("Could not get audio focus");
                 }
                 MediaPlayer.PrepareAsync();
-                //AquireWifiLock();
+                networkController.AquireWifiLock();
                 //StartForeground();
             }
             catch (Java.Lang.IllegalStateException ex)
@@ -269,13 +244,11 @@ namespace DisertationProject.Controller
         /// </summary>
         private void Pause()
         {
-            SendCommand(Globals.PlayState.Paused);
             if (MediaPlayer.IsPlaying)
             {
                 MediaPlayer.Pause();
-                State = Globals.PlayState.Paused;
+                State = State.Paused;
             }
-            StopForeground(true);
         }
 
 
@@ -284,11 +257,10 @@ namespace DisertationProject.Controller
         /// </summary>
         private void Stop()
         {
-            SendCommand(Globals.PlayState.Stopped);
             if (MediaPlayer.IsPlaying)
                 MediaPlayer.Stop();
             MediaPlayer.Reset();
-            State = Globals.PlayState.Stopped;
+            State = State.Stopped;
             StopForeground(true);
             networkController.ReleaseWifiLock();
         }
@@ -304,7 +276,7 @@ namespace DisertationProject.Controller
                 PlayList.DecrementPosition();
                 Play();
             }
-            else if (PlayList.Repeat == Globals.State.On)
+            else if (PlayList.Repeat == State.On)
             {
                 PlayList.SetPositionToEnd();
                 Play();
@@ -322,7 +294,7 @@ namespace DisertationProject.Controller
                 PlayList.IncrementPosition();
                 Play();
             }
-            else if (PlayList.Repeat == Globals.State.On)
+            else if (PlayList.Repeat == State.On)
             {
                 PlayList.ResetPosition();
                 Play();
@@ -333,7 +305,7 @@ namespace DisertationProject.Controller
         /// Toggle repeat On or Off
         /// </summary>
         /// <param name="state">State can be "On" / "Off"</param>
-        private void ToggleRepeat(Globals.State state)
+        private void ToggleRepeat(State state)
         {
             PlayList.Repeat = state;
         }
@@ -429,15 +401,16 @@ namespace DisertationProject.Controller
         private void StartForeground(string title, string artist, string song)
         {
             var pendingIntent = PendingIntent.GetActivity(Application.Context, 0, new Intent(Application.Context, typeof(MainActivity)), PendingIntentFlags.UpdateCurrent);
+            var text = string.Format("{0} - {1}", artist, song);
             var notification = new Notification
             {
-                TickerText = new Java.Lang.String(artist + song),
+                TickerText = new Java.Lang.String(text),
                 Icon = Resource.Drawable.ic_stat_av_play_over_video
             };
 
             notification.Flags |= NotificationFlags.OngoingEvent;
 #pragma warning disable CS0618 // Type or member is obsolete
-            notification.SetLatestEventInfo(Application.Context, title, artist + song, pendingIntent);
+            notification.SetLatestEventInfo(Application.Context, "Playing", text, pendingIntent);
 #pragma warning restore CS0618 // Type or member is obsolete
             StartForeground(notificationId, notification);
         }

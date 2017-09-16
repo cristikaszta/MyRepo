@@ -67,7 +67,5 @@ namespace DisertationProject.Controller
             if (wifiLock.IsHeld)
                 wifiLock.Release();
         }
-
-
     }
 }

@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace DisertationProject.Model
 {
     /// <summary>
@@ -19,45 +21,18 @@ namespace DisertationProject.Model
         public const int ErrorTextBox = Resource.Id.textView1;
         public const int SongListView = Resource.Id.songListView;
 
-        //Actions
-        public static class ActionEvent
-        {
-            public const string ActionPlay = "PLAY";
-            public const string ActionPause = "PAUSE";
-            public const string ActionStop = "ActionSTOP";
-            public const string ActionPrevious = "PREVIOUS";
-            public const string ActionNext = "NEXT";
-            public const string ActionRepeatOn = "REPEAT_ON";
-            public const string ActionRepeatOff = "REPEAT_OFF";
-            public const string ActionShuffleOn = "SHUFFLE_ON";
-            public const string ActionShuffleOff = "SHUFFLE_OFF";
-        }
 
-        //Errors
-        public static class Errors
-        {
-            internal const string GeneralException = "GeneralException";
-            internal const string IllegalStateException = "IllegalStateException";
-            internal const string NetworkOffline = "NetworkOffline";
-            internal const string DatabaseError = "DatabaseError";
-        }
-
-        //Play state
-        public static class PlayState
-        {
-            internal const string Playing = "Playing";
-            internal const string Stopped = "Stopped";
-            internal const string Paused = "Paused";
-
-        }
 
         //Labels
-        public const string ProjectLabel = "DisertationProject";
+        public const string PROJECT_LABEL = "DisertationProject";
 
         public static class Songs
         {
             //URL
             public const string SampleSong1 = @"http://www.noiseaddicts.com/samples_1w72b820/4353.mp3";
+            public const string SampleSong2 = @"http://www.noiseaddicts.com/samples_1w72b820/1450.mp3";
+            public const string SampleSong3 = @"http://www.noiseaddicts.com/samples_1w72b820/4356.mp3";
+            public const string SampleSong4 = @"http://www.noiseaddicts.com/samples_1w72b820/4249.mp3";
 
             //MP3
             public const int SampleSong10 = Resource.Raw.Jessica_Jay_Casablanca;
@@ -65,9 +40,73 @@ namespace DisertationProject.Model
         }
 
         //Enumerations
-        public enum Emotions { Sad, Happy, Neutral, Angry }
-        public enum TextType { Info, Warning, Error }
-        public enum State { On, Off }
+        public enum ActionEvent
+        {
+            [Description("PLAY")]
+            ActionPlay,
+            [Description("PAUSE")]
+            ActionPause,
+            [Description("ActionSTOP")]
+            ActionStop,
+            [Description("PREVIOUS")]
+            ActionPrevious,
+            [Description("NEXT")]
+            ActionNext,
+            [Description("REPEAT_ON")]
+            ActionRepeatOn,
+            [Description("REPEAT_OFF")]
+            ActionRepeatOff,
+            [Description("SHUFFLE_ON")]
+            ActionShuffleOn,
+            [Description("SHUFFLE_OFF")]
+            ActionShuffleOff
+        }
+
+        public enum Errors
+        {
+            [Description("GeneralException")]
+            GeneralException,
+            [Description("IllegalStateException")]
+            IllegalStateException,
+            [Description("NetworkOffline")]
+            NetworkOffline,
+            [Description("DatabaseError")]
+            DatabaseError
+        }
+
+        public enum Emotions
+        {
+            [Description("Sad")]
+            Sad,
+            [Description("Happy")]
+            Happy,
+            [Description("Neutral")]
+            Neutral,
+            [Description("Angry")]
+            Angry
+        }
+        public enum TextType
+        {
+            [Description("Info")]
+            Info,
+            [Description("Warning")]
+            Warning,
+            [Description("Error")]
+            Error
+        }
+        public enum State
+        {
+            [Description("On")]
+            On,
+            [Description("Off")]
+            Off,
+            [Description("Playing")]
+            Playing,
+            [Description("Stopped")]
+            Stopped,
+            [Description("Paused")]
+            Paused
+        }
 
     }
 

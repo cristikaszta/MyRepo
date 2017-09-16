@@ -1,17 +1,17 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Webkit;
 using Android.Widget;
 using DisertationProject.Model;
 using System.Collections.Generic;
+using static DisertationProject.Model.Globals;
 
 namespace DisertationProject.Controller
 {
     /// <summary>
     /// Main activity
     /// </summary>
-    [Activity(Label = Globals.ProjectLabel, MainLauncher = true, Icon = "@drawable/ic_launcher")]
+    [Activity(Label = PROJECT_LABEL, MainLauncher = true, Icon = "@drawable/ic_launcher")]
     public class MainActivity : Activity
     {
 
@@ -23,7 +23,7 @@ namespace DisertationProject.Controller
         /// <summary>
         /// List items
         /// </summary>
-        public List<string> Items { get; set; }
+        public List<Song> Items { get; set; }
 
         /// <summary>
         /// Song list adapter
@@ -43,9 +43,6 @@ namespace DisertationProject.Controller
         public ToggleButton Repeat { get; private set; }
         public ToggleButton Shuffle { get; private set; }
 
-        WebView webView;
-        WebSettings webSettings;
-
         /// <summary>
         /// On create
         /// </summary>
@@ -53,45 +50,11 @@ namespace DisertationProject.Controller
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
-
-            // Set our view from the "main" layout resource
-            SetContentView(Globals.MainLayoutId);
-
-            //Start music service controller
-            var firstIntent = new Intent(Globals.ActionEvent.ActionStop);
-            firstIntent.SetPackage("DisertationProject.Controller");
-            Application.Context.StartService(firstIntent);
-
-            //Start UI interface controller
-            var secondIntent = new Intent(Globals.PlayState.Stopped);
-            secondIntent.SetPackage("DisertationProject.Controller");
-            Application.Context.StartService(secondIntent);
-
-            //webView = FindViewById<WebView>(Resource.Id.webView1);
-            //webSettings = webView.Settings;
-            //webSettings.JavaScriptEnabled = true;
-            //webView.SetWebChromeClient(new WebChromeClient());
-            //webView.LoadUrl(@"https://www.youtube.com/embed/gTw2YvutJRA?ecver=2");
-
+            SetContentView(MainLayoutId);
             SetupButtons();
             SetupTextContainers();
         }
 
-        /// <summary>
-        /// Override OnDestroy method
-        /// </summary>
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-        }
-
-        /// <summary>
-        /// Override OnPause method
-        /// </summary>
-        protected override void OnPause()
-        {
-            base.OnPause();
-        }
 
         private void SetupButtons()
         {
@@ -103,20 +66,21 @@ namespace DisertationProject.Controller
             Repeat = Helper.findById(Resource.Id.repeatButton, FindViewById<ToggleButton>);
             Shuffle = Helper.findById(Resource.Id.shuffleButton, FindViewById<ToggleButton>);
 
-            Play.Click += (sender, args) => SendCommand(Globals.ActionEvent.ActionPlay);
-            Pause.Click += (sender, args) => SendCommand(Globals.ActionEvent.ActionPause);
-            Stop.Click += (sender, args) => SendCommand(Globals.ActionEvent.ActionStop);
-            Previous.Click += (sender, args) => SendCommand(Globals.ActionEvent.ActionPrevious);
-            Next.Click += (sender, args) => SendCommand(Globals.ActionEvent.ActionNext);
+            Play.Click += (sender, args) => SendCommand(ActionEvent.ActionPlay);
+            Pause.Click += (sender, args) => SendCommand(ActionEvent.ActionPause);
+            Stop.Click += (sender, args) => SendCommand(ActionEvent.ActionStop);
+            Previous.Click += (sender, args) => SendCommand(ActionEvent.ActionPrevious);
+            Next.Click += (sender, args) => SendCommand(ActionEvent.ActionNext);
             Repeat.Click += (sender, args) =>
             {
-                if (Repeat.Checked) SendCommand(Globals.ActionEvent.ActionRepeatOn);
-                else SendCommand(Globals.ActionEvent.ActionRepeatOff);
+                if (Repeat.Checked)
+                    SendCommand(ActionEvent.ActionRepeatOn);
+                else SendCommand(ActionEvent.ActionRepeatOff);
             };
             Shuffle.Click += (sender, args) =>
             {
-                if (Repeat.Checked) SendCommand(Globals.ActionEvent.ActionShuffleOn);
-                else SendCommand(Globals.ActionEvent.ActionShuffleOff);
+                if (Repeat.Checked) SendCommand(ActionEvent.ActionShuffleOn);
+                else SendCommand(ActionEvent.ActionShuffleOff);
             };
         }
 
@@ -127,13 +91,15 @@ namespace DisertationProject.Controller
         {
             textView = Helper.findById(Resource.Id.textView1, FindViewById<TextView>);
 
-            Items = new List<string> { "one", "two", "three" };
+            Items = new List<Song> {
+                new Song { Artist = "Trumpet", Name = "March", Emotion = Emotions.Happy, Source = Songs.SampleSong1},
+                new Song { Artist = "Russia", Name = "Katyusha", Emotion = Emotions.Happy, Source = Songs.SampleSong2},
+                new Song { Artist = "America", Name = "Yankee Doodle Dandy", Emotion = Emotions.Happy, Source = Songs.SampleSong3},
+                new Song { Artist = "Romania", Name = "National Anthem", Emotion = Emotions.Happy, Source = Songs.SampleSong4}
+            };
             listView = (ListView)FindViewById(Resource.Id.songListView);
             songListAdapter = new SongListAdapter(this, Items);
-            //listAdapter = new ArrayAdapter<string>(mainActivity, Android.Resource.Layout.SimpleListItemSingleChoice, Items);
             listView.Adapter = songListAdapter;
-            //listAdapter.RegisterDataSetObserver(new MyDataSetObserver());
-            //listAdapter.Add("a");
         }
 
 
@@ -141,9 +107,10 @@ namespace DisertationProject.Controller
         /// Send command
         /// </summary>
         /// <param name="action">The intended ation</param>
-        public void SendCommand(string action)
+        public void SendCommand(ActionEvent action)
         {
-            var intent = new Intent(action);
+            var stringifiedAction = Helper.ConvertActionEvent(action);
+            var intent = new Intent(stringifiedAction, null, this, typeof(MusicController));
             Application.Context.StartService(intent);
         }
     }

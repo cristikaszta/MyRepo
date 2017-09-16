@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using DisertationProject.Model;
+using System.Collections.Generic;
 
 namespace DisertationProject.Controller
 {
@@ -16,37 +10,47 @@ namespace DisertationProject.Controller
     /// Custom song list adapter class
     /// Inherits BaseAdapter class
     /// </summary>
-    public class SongListAdapter : BaseAdapter<string>
+    public class SongListAdapter : BaseAdapter<Song>
     {
-        List<string> items;
-        Activity context;
-        public SongListAdapter(Activity context, List<string> items) : base()
+        private List<Song> items;
+        private Activity context;
+
+        public SongListAdapter(Activity context, List<Song> items) : base()
         {
             this.context = context;
             this.items = items;
         }
+        public override Song this[int position]
+        {
+            get
+            {
+                return items[position];
+            }
+        }
+
+        public override int Count
+        {
+            get
+            {
+                return items.Count;
+            }
+        }
+
         public override long GetItemId(int position)
         {
             return position;
         }
 
-        public override string this[int position]
-        {
-            get { return items[position]; }
-        }
-
-        public override int Count
-        {
-            get { return items.Count; }
-        }
-
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
-            View view = convertView; // re-use an existing view, if one is available
-            if (view == null) // otherwise create a new one
-                view = context.LayoutInflater.Inflate(Android.Resource.Layout.SimpleListItemSingleChoice, null);
-            view.FindViewById<TextView>(Android.Resource.Id.Text1).Text = items[position];
-            return view;
+            var item = items[position];
+            if (convertView == null)
+            {
+                convertView = context.LayoutInflater.Inflate(Android.Resource.Layout.SimpleListItem1, null);
+            }
+            convertView.FindViewById<TextView>(Android.Resource.Id.Text1).Text = string.Format("{0} - {1}", item.Name, item.Artist);
+
+            return convertView;
         }
     }
 }
