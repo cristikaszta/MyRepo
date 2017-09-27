@@ -10,7 +10,7 @@ namespace DisertationProject.Model
         /// <summary>
         /// Id of the song
         /// </summary>
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         /// <summary>
         /// Name of the song

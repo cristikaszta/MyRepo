@@ -15,10 +15,10 @@ namespace DisertationProject.Controller
     /// Music service controller
     /// </summary>
     [Service]
-    [IntentFilter(new[] {"ActionPlay",   "ActionPause", "ActionStop",
+    [IntentFilter(new[] { "ActionPlay",   "ActionPause", "ActionStop",
                           "ActionPrevious","ActionNext",
                           "ActionRepeatOn","ActionRepeatOff" })]
-    public class MusicController : Service, AudioManager.IOnAudioFocusChangeListener
+    public class MusicController : Service//, AudioManager.IOnAudioFocusChangeListener
     {
         /// <summary>
         /// Intent
@@ -81,7 +81,7 @@ namespace DisertationProject.Controller
         /// </summary>
         /// <param name="intent">The intent</param>
         /// <returns></returns>
-        public override IBinder OnBind(Intent intent) { return null; }
+        public override IBinder OnBind(Intent intent) { throw new NotImplementedException(); }
 
         /// <summary>
         /// On create simply detect some of our managers
@@ -92,7 +92,7 @@ namespace DisertationProject.Controller
             networkController = new NetworkController();
             InitializeMediaPlayer();
             PlayList = new Playlist();
-            SetupPlaylist();
+            //SetupPlaylist();
         }
 
         private void InitializeMediaPlayer()
@@ -100,50 +100,54 @@ namespace DisertationProject.Controller
             audioManager = (AudioManager)Application.Context.GetSystemService(AudioService);
             MediaPlayer = new MediaPlayer();
 
-            //Tell our player to stream music
             MediaPlayer.SetAudioStreamType(Stream.Music);
 
             //Wake mode will be partial to keep the CPU still running under lock screen
             MediaPlayer.SetWakeMode(Application.Context, WakeLockFlags.Partial);
 
-            //When we have prepared the song start playback
             MediaPlayer.Prepared += (sender, args) => MediaPlayer.Start();
 
-            //When we have reached the end of the song stop ourselves, however you could signal next track here.
-            MediaPlayer.Completion += (sender, args) => Next();
+            //MediaPlayer.Completion += (sender, args) => Next();
+
+            MediaPlayer.Completion += (sender, args) =>
+            {
+                Intent intent = new Intent("GetNext");
+                intent.PutExtra("GetNext", 0);
+                SendBroadcast(intent);
+            };
 
             MediaPlayer.Error += (sender, args) =>
             {
-                Stop();//this will clean up and reset properly.
-                throw new Exception("Error in playback resetting: ");
+                Stop();
+                //throw new Exception("Error in playback resetting: ");
             };
         }
 
-        /// <summary>
-        /// Setup playlist
-        /// </summary>
-        private void SetupPlaylist()
-        {
-            var songList = new List<Song>
-            {
-                new Song { Artist = "Trumpet", Name = "March", Emotion = Emotions.Happy, Source = Songs.SampleSong1},
-                new Song { Artist = "Russia", Name = "Katyusha", Emotion = Emotions.Happy, Source = Songs.SampleSong2},
-                new Song { Artist = "America", Name = "Yankee Doodle Dandy", Emotion = Emotions.Happy, Source = Songs.SampleSong3},
-                new Song { Artist = "Romania", Name = "National Anthem", Emotion = Emotions.Happy, Source = Songs.SampleSong4}
-            };
+        ///// <summary>
+        ///// Setup playlist
+        ///// </summary>
+        //private void SetupPlaylist()
+        //{
+        //    var songList = new List<Song>
+        //    {
+        //        new Song {Id = 101, Artist = "Trumpet", Name = "March", Emotion = Emotions.Happy, Source = Songs.SampleSong1},
+        //        new Song {Id = 102, Artist = "Russia", Name = "Katyusha", Emotion = Emotions.Happy, Source = Songs.SampleSong2},
+        //        new Song {Id = 103, Artist = "America", Name = "Yankee Doodle Dandy", Emotion = Emotions.Happy, Source = Songs.SampleSong3},
+        //        new Song {Id = 104, Artist = "Romania", Name = "National Anthem", Emotion = Emotions.Happy, Source = Songs.SampleSong4}
+        //    };
 
-            PlayList.Add(songList);
+        //    PlayList.Add(songList);
 
-            songList = PlayList.SongList.Where(p => p.Emotion == Emotions.Happy).Select(p => p).ToList();
-            HappyPlaylist = new Playlist(songList);
+        //    songList = PlayList.SongList.Where(p => p.Emotion == Emotions.Happy).Select(p => p).ToList();
+        //    HappyPlaylist = new Playlist(songList);
 
-            songList = PlayList.SongList.Where(p => p.Emotion == Emotions.Neutral).Select(p => p).ToList();
-            NeutralPlaylist = new Playlist(songList);
+        //    songList = PlayList.SongList.Where(p => p.Emotion == Emotions.Neutral).Select(p => p).ToList();
+        //    NeutralPlaylist = new Playlist(songList);
 
-            songList = PlayList.SongList.Where(p => p.Emotion == Emotions.Sad).Select(p => p).ToList();
-            SadPlaylist = new Playlist(songList);
+        //    songList = PlayList.SongList.Where(p => p.Emotion == Emotions.Sad).Select(p => p).ToList();
+        //    SadPlaylist = new Playlist(songList);
 
-        }
+        //}
 
         /// <summary>
         /// On start command
@@ -157,11 +161,21 @@ namespace DisertationProject.Controller
             var action = Helper.ConvertActionEvent(intent.Action);
             switch (action)
             {
-                case ActionEvent.ActionPlay: Play(); break;
+                case ActionEvent.ActionPlay:
+                    var source = intent.GetStringExtra("source");
+                    //if (!string.IsNullOrEmpty(source))
+                    //{
+                        Play(source);
+                    //}
+                    //else
+                    //{
+                    //    Play();
+                    //}
+                    break;
                 case ActionEvent.ActionStop: Stop(); break;
                 case ActionEvent.ActionPause: Pause(); break;
-                case ActionEvent.ActionPrevious: Previous(); break;
-                case ActionEvent.ActionNext: Next(); break;
+                //case ActionEvent.ActionPrevious: Previous(); break;
+                //case ActionEvent.ActionNext: Next(); break;
                 case ActionEvent.ActionRepeatOn: ToggleRepeat(State.On); break;
                 case ActionEvent.ActionRepeatOff: ToggleRepeat(State.Off); break;
             }
@@ -174,33 +188,18 @@ namespace DisertationProject.Controller
         /// Play song method
         /// <param name="songUrl">The song URL string</param>
         /// </summary>
-        private void Play()
-        {
-            if (networkController.IsConnected)
-            {
-                try
-                {
-                    Play(PlayList.GetCurrentSong().Source);
-                    StartForeground("Playing ", PlayList.GetCurrentSong().Artist, PlayList.GetCurrentSong().Name);
-                    networkController.AquireWifiLock();
-                }
-                catch (Java.Lang.IllegalStateException)
-                {
-                    Stop();
-                }
-                catch (Exception ex)
-                {
-                    Stop();
-                }
-            }
-            else //network is not online
-            {
-                Stop();
-            }
-        }
+        //private void Play()
+        //{
+        //    Play(PlayList.GetCurrentSong().Source);
+        //}
 
         private async void Play(string uri)
         {
+            if (!networkController.IsConnected)
+            {
+                Stop();
+                return;
+            }
             if (State == State.Paused)
             {
                 MediaPlayer.Start();
@@ -209,33 +208,29 @@ namespace DisertationProject.Controller
                 return;
             }
 
-            if (MediaPlayer.IsPlaying) return;
-
-            Uri uri2 = new Uri("https://www.youtube.com/watch?v=n4RjJKxsamQ&list=RDMMn4RjJKxsamQ");
+            //if (MediaPlayer.IsPlaying) return;
 
             try
             {
-
+                MediaPlayer.Reset();
                 await MediaPlayer.SetDataSourceAsync(Application.Context, Android.Net.Uri.Parse(uri));
-                var focusResult = audioManager.RequestAudioFocus(this, Stream.Music, AudioFocus.Gain);
-                if (focusResult != AudioFocusRequest.Granted)
-                {
-                    //could not get audio focus
-                    throw new Exception("Could not get audio focus");
-                }
+                //var focusResult = audioManager.RequestAudioFocus(this, Stream.Music, AudioFocus.Gain);
+                //if (focusResult != AudioFocusRequest.Granted)
+                //{
+                //    Stop();
+                //}
                 MediaPlayer.PrepareAsync();
                 networkController.AquireWifiLock();
-                //StartForeground();
+                StartForeground("Playing ", PlayList.GetCurrentSong().Artist, PlayList.GetCurrentSong().Name);
+                networkController.AquireWifiLock();
             }
             catch (Java.Lang.IllegalStateException ex)
             {
-                //If the media player is called in an invalid state
-                throw ex;
+                Stop();
             }
             catch (Exception)
             {
-                //unable to start playback log error
-                throw new Exception("Unable to start playback log error.");
+                Stop();
             }
         }
 
@@ -268,38 +263,38 @@ namespace DisertationProject.Controller
         /// <summary>
         /// Play previous song
         /// </summary>
-        private void Previous()
-        {
-            Stop();
-            if (!PlayList.IsAtBeggining)
-            {
-                PlayList.DecrementPosition();
-                Play();
-            }
-            else if (PlayList.Repeat == State.On)
-            {
-                PlayList.SetPositionToEnd();
-                Play();
-            }
-        }
+        //private void Previous()
+        //{
+        //    Stop();
+        //    if (!PlayList.IsAtBeggining)
+        //    {
+        //        PlayList.DecrementPosition();
+        //        Play();
+        //    }
+        //    else if (PlayList.Repeat == State.On)
+        //    {
+        //        PlayList.SetPositionToEnd();
+        //        Play();
+        //    }
+        //}
 
         /// <summary>
         /// Play next song
         /// </summary>
-        public void Next()
-        {
-            Stop();
-            if (!PlayList.IsAtEnd)
-            {
-                PlayList.IncrementPosition();
-                Play();
-            }
-            else if (PlayList.Repeat == State.On)
-            {
-                PlayList.ResetPosition();
-                Play();
-            }
-        }
+        //public void Next()
+        //{
+        //    Stop();
+        //    if (!PlayList.IsAtEnd)
+        //    {
+        //        PlayList.IncrementPosition();
+        //        Play();
+        //    }
+        //    else if (PlayList.Repeat == State.On)
+        //    {
+        //        PlayList.ResetPosition();
+        //        Play();
+        //    }
+        //}
 
         /// <summary>
         /// Toggle repeat On or Off
@@ -323,7 +318,7 @@ namespace DisertationProject.Controller
             }
             catch (Exception ex)
             {
-                throw new Exception();
+                Stop();
             };
             return duration;
         }
@@ -341,8 +336,8 @@ namespace DisertationProject.Controller
             }
             catch (Exception)
             {
-                throw new Exception();
-            };
+                Stop();
+            }
             return position;
         }
 
