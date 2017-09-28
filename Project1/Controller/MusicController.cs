@@ -22,26 +22,6 @@ namespace DisertationProject.Controller
         public Intent intent;
 
         /// <summary>
-        /// Playlist
-        /// </summary>
-        public Playlist PlayList { get; set; }
-
-        /// <summary>
-        /// Happy playlist
-        /// </summary>
-        public Playlist HappyPlaylist;
-
-        /// <summary>
-        /// Sad playlist
-        /// </summary>
-        public Playlist SadPlaylist;
-
-        /// <summary>
-        /// Neutral playlist
-        /// </summary>
-        public Playlist NeutralPlaylist;
-
-        /// <summary>
         /// Data controller
         /// </summary>
         private DataController dataController;
@@ -89,8 +69,6 @@ namespace DisertationProject.Controller
             base.OnCreate();
             networkController = new NetworkController();
             InitializeMediaPlayer();
-            PlayList = new Playlist();
-            //SetupPlaylist();
         }
 
         private void InitializeMediaPlayer()
@@ -105,8 +83,6 @@ namespace DisertationProject.Controller
 
             MediaPlayer.Prepared += (sender, args) => MediaPlayer.Start();
 
-            //MediaPlayer.Completion += (sender, args) => Next();
-
             MediaPlayer.Completion += (sender, args) =>
             {
                 Intent intent = new Intent("GetNext");
@@ -117,7 +93,6 @@ namespace DisertationProject.Controller
             MediaPlayer.Error += (sender, args) =>
             {
                 Stop();
-                //throw new Exception("Error in playback resetting: ");
             };
         }
 
@@ -161,9 +136,10 @@ namespace DisertationProject.Controller
             {
                 case ActionEvent.ActionPlay:
                     var source = intent.GetStringExtra("source");
+                    var name = intent.GetStringExtra("name");
                     //if (!string.IsNullOrEmpty(source))
                     //{
-                    Play(source);
+                    Play(source, name);
                     //}
                     //else
                     //{
@@ -172,10 +148,10 @@ namespace DisertationProject.Controller
                     break;
                 case ActionEvent.ActionStop: Stop(); break;
                 case ActionEvent.ActionPause: Pause(); break;
-                //case ActionEvent.ActionPrevious: Previous(); break;
-                //case ActionEvent.ActionNext: Next(); break;
-                case ActionEvent.ActionRepeatOn: ToggleRepeat(ToggleState.On); break;
-                case ActionEvent.ActionRepeatOff: ToggleRepeat(ToggleState.Off); break;
+                    //case ActionEvent.ActionPrevious: Previous(); break;
+                    //case ActionEvent.ActionNext: Next(); break;
+                    //case ActionEvent.ActionRepeatOn: ToggleRepeat(ToggleState.On); break;
+                    //case ActionEvent.ActionRepeatOff: ToggleRepeat(ToggleState.Off); break;
             }
             //Set sticky as we are a long running operation
             return StartCommandResult.Sticky;
@@ -219,7 +195,7 @@ namespace DisertationProject.Controller
                 //}
                 MediaPlayer.PrepareAsync();
                 networkController.AquireWifiLock();
-                StartForeground("Playing ", _name, "T");
+                StartForeground(_name, "T");
                 networkController.AquireWifiLock();
             }
             catch (Java.Lang.IllegalStateException ex)
@@ -265,51 +241,6 @@ namespace DisertationProject.Controller
         }
 
         /// <summary>
-        /// Play previous song
-        /// </summary>
-        //private void Previous()
-        //{
-        //    Stop();
-        //    if (!PlayList.IsAtBeggining)
-        //    {
-        //        PlayList.DecrementPosition();
-        //        Play();
-        //    }
-        //    else if (PlayList.Repeat == State.On)
-        //    {
-        //        PlayList.SetPositionToEnd();
-        //        Play();
-        //    }
-        //}
-
-        /// <summary>
-        /// Play next song
-        /// </summary>
-        //public void Next()
-        //{
-        //    Stop();
-        //    if (!PlayList.IsAtEnd)
-        //    {
-        //        PlayList.IncrementPosition();
-        //        Play();
-        //    }
-        //    else if (PlayList.Repeat == State.On)
-        //    {
-        //        PlayList.ResetPosition();
-        //        Play();
-        //    }
-        //}
-
-        /// <summary>
-        /// Toggle repeat On or Off
-        /// </summary>
-        /// <param name="state">State can be "On" / "Off"</param>
-        private void ToggleRepeat(ToggleState state)
-        {
-            PlayList.Repeat = state;
-        }
-
-        /// <summary>
         /// Get the duration of the current song
         /// </summary>
         /// <returns>The duration of the current playing song</returns>
@@ -338,7 +269,7 @@ namespace DisertationProject.Controller
             {
                 position = MediaPlayer.CurrentPosition;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 Stop();
             }
@@ -397,7 +328,7 @@ namespace DisertationProject.Controller
         /// When we start on the foreground we will present a notification to the user
         /// When they press the notification it will take them to the main page so they can control the music
         /// </summary>
-        private void StartForeground(string title, string artist, string song)
+        private void StartForeground(string artist, string song)
         {
             var pendingIntent = PendingIntent.GetActivity(Application.Context, 0, new Intent(Application.Context, typeof(MainActivity)), PendingIntentFlags.UpdateCurrent);
             var text = string.Format("{0} - {1}", artist, song);

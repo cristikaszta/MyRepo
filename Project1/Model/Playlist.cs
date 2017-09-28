@@ -19,20 +19,29 @@ namespace DisertationProject.Model
         /// </summary>
         public string PlayListName { get; set; }
 
-        /// <summary>
-        /// The total items in the playlist
-        /// </summary>
-        private int totalItems;
+        private int _totalItems;
+
+        private int _position;
 
         /// <summary>
         /// The current position in the playlist
         /// </summary>
-        public int Position { get; set; }
+        public int Position
+        {
+            get
+            {
+                return _position;
+            }
+            set
+            {
+                _position = value;
+            }
+        }
 
         /// <summary>
         /// The song list
         /// </summary>
-        public List<Song> SongList;
+        public List<Song> SongList { get; }
 
         /// <summary>
         /// Suffle property
@@ -51,7 +60,7 @@ namespace DisertationProject.Model
         {
             get
             {
-                if (Position == totalItems - 1)
+                if (_position == _totalItems - 1)
                     return true;
                 return false;
             }
@@ -64,11 +73,10 @@ namespace DisertationProject.Model
         {
             get
             {
-                if (Position == 0)
+                if (_position == 0)
                     return true;
                 return false;
             }
-
         }
 
         /// <summary>
@@ -76,7 +84,7 @@ namespace DisertationProject.Model
         /// </summary>
         private void Initialize()
         {
-            Position = 0;
+            _position = 0;
             Shuffle = ToggleState.Off;
             Repeat = ToggleState.Off;
         }
@@ -88,7 +96,7 @@ namespace DisertationProject.Model
         {
             Initialize();
             SongList = new List<Song>();
-            totalItems = 0;
+            _totalItems = 0;
         }
 
         /// <summary>
@@ -99,7 +107,7 @@ namespace DisertationProject.Model
         {
             Initialize();
             SongList = trackList;
-            totalItems = trackList.Count;
+            _totalItems = trackList.Count;
         }
 
         /// <summary>
@@ -108,7 +116,7 @@ namespace DisertationProject.Model
         public void Add(Song item)
         {
             SongList.Add(item);
-            totalItems++;
+            _totalItems++;
         }
 
         /// <summary>
@@ -117,7 +125,7 @@ namespace DisertationProject.Model
         public void Add(List<Song> items)
         {
             SongList.AddRange(items);
-            totalItems += items.Count();
+            _totalItems += items.Count();
         }
 
         /// <summary>
@@ -128,7 +136,7 @@ namespace DisertationProject.Model
             if (SongList.Any())
             {
                 SongList.Remove(item);
-                totalItems--;
+                _totalItems--;
             }
         }
 
@@ -138,7 +146,7 @@ namespace DisertationProject.Model
         /// <returns>Current song</returns>
         public Song GetCurrentSong()
         {
-            return SongList[Position];
+            return SongList[_position];
         }
 
         /// <summary>
@@ -146,8 +154,8 @@ namespace DisertationProject.Model
         /// </summary>
         public void IncrementPosition()
         {
-            if (Position < totalItems - 1)
-                Position++;
+            if (_position < _totalItems - 1)
+                _position++;
         }
 
         /// <summary>
@@ -155,8 +163,8 @@ namespace DisertationProject.Model
         /// </summary>
         public void DecrementPosition()
         {
-            if (Position > 0)
-                Position--;
+            if (_position > 0)
+                _position--;
         }
 
         /// <summary>
@@ -164,7 +172,7 @@ namespace DisertationProject.Model
         /// </summary>
         public void ResetPosition()
         {
-            Position = 0;
+            _position = 0;
         }
 
         /// <summary>
@@ -172,7 +180,7 @@ namespace DisertationProject.Model
         /// </summary>
         public void SetPositionToEnd()
         {
-            Position = totalItems - 1;
+            _position = _totalItems - 1;
         }
     }
 }

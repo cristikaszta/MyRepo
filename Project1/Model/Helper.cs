@@ -55,7 +55,7 @@ namespace DisertationProject.Controller
         /// <param name="id">Id of the view</param>
         /// <param name="del">Delegate method used to find view</param>
         /// <returns>The object</returns>
-        public static T findById<T>(int id, Func<int, T> del)
+        public static T FindById<T>(int id, Func<int, T> del)
         {
             T x = del(id);
             return x;

@@ -22,11 +22,6 @@ namespace DisertationProject.Controller
         private TextView textView;
 
         /// <summary>
-        /// List items
-        /// </summary>
-        //public List<Song> Items { get; set; }
-
-        /// <summary>
         /// Song list adapter
         /// </summary>
         private SongListAdapter songListAdapter;
@@ -49,9 +44,7 @@ namespace DisertationProject.Controller
         public ToggleButton Repeat { get; private set; }
         public ToggleButton Shuffle { get; private set; }
 
-        public delegate string GetNextSong();
-
-        SongComletionReceiver _songCompletionReceiver;
+        private SongComletionReceiver _songCompletionReceiver;
 
         /// <summary>
         /// On create
@@ -92,29 +85,78 @@ namespace DisertationProject.Controller
 
         private void SetupButtons()
         {
-            Play = Helper.findById(Resource.Id.playButton, FindViewById<Button>);
-            Pause = Helper.findById(Resource.Id.pauseButton, FindViewById<Button>);
-            Stop = Helper.findById(Resource.Id.stopButton, FindViewById<Button>);
-            Previous = Helper.findById(Resource.Id.previousButton, FindViewById<Button>);
-            Next = Helper.findById(Resource.Id.nextButton, FindViewById<Button>);
-            Repeat = Helper.findById(Resource.Id.repeatButton, FindViewById<ToggleButton>);
-            Shuffle = Helper.findById(Resource.Id.shuffleButton, FindViewById<ToggleButton>);
+            Play = Helper.FindById(Resource.Id.playButton, FindViewById<Button>);
+            Pause = Helper.FindById(Resource.Id.pauseButton, FindViewById<Button>);
+            Stop = Helper.FindById(Resource.Id.stopButton, FindViewById<Button>);
+            Previous = Helper.FindById(Resource.Id.previousButton, FindViewById<Button>);
+            Next = Helper.FindById(Resource.Id.nextButton, FindViewById<Button>);
+            Repeat = Helper.FindById(Resource.Id.repeatButton, FindViewById<ToggleButton>);
+            Shuffle = Helper.FindById(Resource.Id.shuffleButton, FindViewById<ToggleButton>);
 
-            Play.Click += (sender, args) => SendCommand(ActionEvent.ActionPlay);
+            Play.Click += (sender, args) =>
+            {
+                var name = PlayList.GetCurrentSong().Name;
+                var source = PlayList.GetCurrentSong().Source;
+                SendCommand(ActionEvent.ActionPlay, source, name);
+            };
             Pause.Click += (sender, args) => SendCommand(ActionEvent.ActionPause);
             Stop.Click += (sender, args) => SendCommand(ActionEvent.ActionStop);
-            Previous.Click += (sender, args) => SendCommand(ActionEvent.ActionPrevious);
-            Next.Click += (sender, args) => SendCommand(ActionEvent.ActionNext);
+            Previous.Click += (sender, args) =>
+            {
+                if (!PlayList.IsAtBeggining)
+                {
+                    PlayList.DecrementPosition();
+                }
+                else if (PlayList.Repeat == ToggleState.On)
+                {
+                    PlayList.SetPositionToEnd();
+                }
+                else
+                {
+                    return;
+                }
+                var name = PlayList.GetCurrentSong().Name;
+                var source = PlayList.GetCurrentSong().Source;
+                SendCommand(ActionEvent.ActionStop);
+                SendCommand(ActionEvent.ActionPlay, source, name);
+            };
+            Next.Click += (sender, args) =>
+            {
+                if (!PlayList.IsAtEnd)
+                {
+                    PlayList.IncrementPosition();
+                }
+                else if (PlayList.Repeat == ToggleState.On)
+                {
+                    PlayList.ResetPosition();
+                }
+                else
+                {
+                    return;
+                }
+                var name = PlayList.GetCurrentSong().Name;
+                var source = PlayList.GetCurrentSong().Source;
+                SendCommand(ActionEvent.ActionStop);
+                SendCommand(ActionEvent.ActionPlay, source, name);
+            };
             Repeat.Click += (sender, args) =>
             {
+                //if (Repeat.Checked)
+                //    SendCommand(ActionEvent.ActionRepeatOn);
+                //else SendCommand(ActionEvent.ActionRepeatOff);
                 if (Repeat.Checked)
-                    SendCommand(ActionEvent.ActionRepeatOn);
-                else SendCommand(ActionEvent.ActionRepeatOff);
+                    PlayList.Repeat = ToggleState.On;
+                else
+                    PlayList.Repeat = ToggleState.Off;
             };
             Shuffle.Click += (sender, args) =>
             {
-                if (Repeat.Checked) SendCommand(ActionEvent.ActionShuffleOn);
-                else SendCommand(ActionEvent.ActionShuffleOff);
+                //if (Repeat.Checked) SendCommand(ActionEvent.ActionShuffleOn);
+                //else SendCommand(ActionEvent.ActionShuffleOff);
+                if (Repeat.Checked)
+                    PlayList.Shuffle = ToggleState.On;
+                else
+                    PlayList.Shuffle = ToggleState.Off;
             };
         }
 
@@ -123,7 +165,7 @@ namespace DisertationProject.Controller
         /// </summary>
         public void SetupTextContainers()
         {
-            textView = Helper.findById(Resource.Id.textView1, FindViewById<TextView>);
+            textView = Helper.FindById(Resource.Id.textView1, FindViewById<TextView>);
             listView = (ListView)FindViewById(Resource.Id.songListView);
             songListAdapter = new SongListAdapter(this, PlayList.SongList);
             listView.Adapter = songListAdapter;
@@ -189,12 +231,14 @@ namespace DisertationProject.Controller
 
         public override void OnReceive(Context context, Intent intent)
         {
-            OnSomeDataReceived(new EventArgs());
+            var e = new EventArgs();
+            SongCompletionEventHandler?.Invoke(this, e);
+            //OnSomeDataReceived(new EventArgs());
         }
 
-        protected virtual void OnSomeDataReceived(EventArgs e)
-        {
-            SongCompletionEventHandler?.Invoke(this, e);
-        }
+        //protected virtual void OnSomeDataReceived(EventArgs e)
+        //{
+        //    SongCompletionEventHandler?.Invoke(this, e);
+        //}
     }
 }
