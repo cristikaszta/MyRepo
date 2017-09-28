@@ -4,10 +4,6 @@ using Android.Media;
 using Android.OS;
 using DisertationProject.Model;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using static DisertationProject.Model.Globals;
-using State = DisertationProject.Model.Globals.State;
 
 namespace DisertationProject.Controller
 {
@@ -70,10 +66,12 @@ namespace DisertationProject.Controller
         /// </summary>
         private AudioManager audioManager;
 
+        private string _name = "SongName";
+
         /// <summary>
         /// State
         /// </summary>
-        public State State { get; private set; }
+        public PlayState State { get; private set; }
 
         /// <summary>
         /// On bind
@@ -165,7 +163,7 @@ namespace DisertationProject.Controller
                     var source = intent.GetStringExtra("source");
                     //if (!string.IsNullOrEmpty(source))
                     //{
-                        Play(source);
+                    Play(source);
                     //}
                     //else
                     //{
@@ -176,8 +174,8 @@ namespace DisertationProject.Controller
                 case ActionEvent.ActionPause: Pause(); break;
                 //case ActionEvent.ActionPrevious: Previous(); break;
                 //case ActionEvent.ActionNext: Next(); break;
-                case ActionEvent.ActionRepeatOn: ToggleRepeat(State.On); break;
-                case ActionEvent.ActionRepeatOff: ToggleRepeat(State.Off); break;
+                case ActionEvent.ActionRepeatOn: ToggleRepeat(ToggleState.On); break;
+                case ActionEvent.ActionRepeatOff: ToggleRepeat(ToggleState.Off); break;
             }
             //Set sticky as we are a long running operation
             return StartCommandResult.Sticky;
@@ -200,10 +198,10 @@ namespace DisertationProject.Controller
                 Stop();
                 return;
             }
-            if (State == State.Paused)
+            if (State == PlayState.Paused)
             {
                 MediaPlayer.Start();
-                State = State.Playing;
+                State = PlayState.Playing;
                 //StartForeground();
                 return;
             }
@@ -221,17 +219,23 @@ namespace DisertationProject.Controller
                 //}
                 MediaPlayer.PrepareAsync();
                 networkController.AquireWifiLock();
-                StartForeground("Playing ", PlayList.GetCurrentSong().Artist, PlayList.GetCurrentSong().Name);
+                StartForeground("Playing ", _name, "T");
                 networkController.AquireWifiLock();
             }
             catch (Java.Lang.IllegalStateException ex)
             {
                 Stop();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 Stop();
             }
+        }
+
+        private void Play(string uri, string name)
+        {
+            _name = name;
+            Play(uri);
         }
 
         /// <summary>
@@ -242,7 +246,7 @@ namespace DisertationProject.Controller
             if (MediaPlayer.IsPlaying)
             {
                 MediaPlayer.Pause();
-                State = State.Paused;
+                State = PlayState.Paused;
             }
         }
 
@@ -255,7 +259,7 @@ namespace DisertationProject.Controller
             if (MediaPlayer.IsPlaying)
                 MediaPlayer.Stop();
             MediaPlayer.Reset();
-            State = State.Stopped;
+            State = PlayState.Stopped;
             StopForeground(true);
             networkController.ReleaseWifiLock();
         }
@@ -300,7 +304,7 @@ namespace DisertationProject.Controller
         /// Toggle repeat On or Off
         /// </summary>
         /// <param name="state">State can be "On" / "Off"</param>
-        private void ToggleRepeat(State state)
+        private void ToggleRepeat(ToggleState state)
         {
             PlayList.Repeat = state;
         }

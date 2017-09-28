@@ -1,5 +1,3 @@
-using Emotion = DisertationProject.Model.Globals.Emotions;
-
 namespace DisertationProject.Model
 {
     /// <summary>

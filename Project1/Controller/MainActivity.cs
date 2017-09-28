@@ -5,14 +5,13 @@ using Android.Widget;
 using DisertationProject.Model;
 using System;
 using System.Collections.Generic;
-using static DisertationProject.Model.Globals;
 
 namespace DisertationProject.Controller
 {
     /// <summary>
     /// Main activity
     /// </summary>
-    [Activity(Label = PROJECT_LABEL, MainLauncher = true, Icon = "@drawable/ic_launcher")]
+    [Activity(Label = Globals.PROJECT_LABEL, MainLauncher = true, Icon = "@drawable/ic_launcher")]
 
     public class MainActivity : Activity
     {
@@ -52,7 +51,7 @@ namespace DisertationProject.Controller
 
         public delegate string GetNextSong();
 
-        SomeBroadcastReceiver _broadcastReceiver;
+        SongComletionReceiver _songCompletionReceiver;
 
         /// <summary>
         /// On create
@@ -61,19 +60,33 @@ namespace DisertationProject.Controller
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
-            SetContentView(MainLayoutId);
+            SetContentView(Globals.MainLayoutId);
             SetupButtons();
             SetupPlaylist();
             SetupTextContainers();
 
-            _broadcastReceiver = new SomeBroadcastReceiver();
+            _songCompletionReceiver = new SongComletionReceiver();
 
-            _broadcastReceiver.SomeDataReceived += (sender, e) =>
+            _songCompletionReceiver.SongCompletionEventHandler += (sender, args) =>
             {
-                SendCommand(ActionEvent.ActionPlay, PlayList.SongList[1].Source);
+                if (!PlayList.IsAtEnd)
+                {
+                    PlayList.IncrementPosition();
+                }
+                else if (PlayList.Repeat == ToggleState.On)
+                {
+                    PlayList.ResetPosition();
+                }
+                else
+                {
+                    return;
+                }
+                PlayList.IncrementPosition();
+                var source = PlayList.GetCurrentSong().Source;
+                SendCommand(ActionEvent.ActionPlay, source);
             };
 
-            RegisterReceiver(_broadcastReceiver, new IntentFilter("GetNext"));
+            RegisterReceiver(_songCompletionReceiver, new IntentFilter("GetNext"));
         }
 
 
@@ -116,8 +129,11 @@ namespace DisertationProject.Controller
             listView.Adapter = songListAdapter;
             listView.ItemClick += (sender, args) =>
             {
-                var source = PlayList.SongList[(int)args.Id].Source;
-                SendCommand(ActionEvent.ActionPlay, source);
+                var currentPosition = args.Position;
+                PlayList.Position = currentPosition;
+                var name = PlayList.GetCurrentSong().Name;
+                var source = PlayList.GetCurrentSong().Source;
+                SendCommand(ActionEvent.ActionPlay, source, name);
             };
         }
 
@@ -126,15 +142,14 @@ namespace DisertationProject.Controller
             PlayList = new Playlist();
             var songList = new List<Song>
             {
-                new Song {Id = 0, Artist = "Trumpet", Name = "March", Emotion = Emotions.Happy, Source = Songs.SampleSong1},
-                new Song {Id = 1, Artist = "Russia", Name = "Katyusha", Emotion = Emotions.Happy, Source = Songs.SampleSong2},
-                new Song {Id = 2, Artist = "America", Name = "Yankee Doodle Dandy", Emotion = Emotions.Happy, Source = Songs.SampleSong3},
-                new Song {Id = 3, Artist = "Romania", Name = "National Anthem", Emotion = Emotions.Happy, Source = Songs.SampleSong4}
+                new Song { Artist = "Trumpet", Name = "March", Emotion = Emotion.Happy, Source = Globals.Songs.SampleSong1},
+                new Song { Artist = "Russia", Name = "Katyusha", Emotion = Emotion.Happy, Source = Globals.Songs.SampleSong2},
+                new Song { Artist = "America", Name = "Yankee Doodle Dandy", Emotion = Emotion.Happy, Source = Globals.Songs.SampleSong3},
+                new Song { Artist = "Romania", Name = "National Anthem", Emotion = Emotion.Happy, Source = Globals.Songs.SampleSong4}
             };
 
             PlayList.Add(songList);
         }
-
 
         /// <summary>
         /// Send command
@@ -155,13 +170,22 @@ namespace DisertationProject.Controller
             StartService(intent);
         }
 
+        public void SendCommand(ActionEvent action, string source, string name)
+        {
+            var stringifiedAction = Helper.ConvertActionEvent(action);
+            var intent = new Intent(stringifiedAction, null, this, typeof(MusicController));
+            intent.PutExtra("source", source);
+            intent.PutExtra("name", name);
+            StartService(intent);
+        }
+
 
     }
 
     [IntentFilter(new[] { "GetNext" })]
-    public class SomeBroadcastReceiver : BroadcastReceiver
+    public class SongComletionReceiver : BroadcastReceiver
     {
-        public event EventHandler SomeDataReceived;
+        public event EventHandler SongCompletionEventHandler;
 
         public override void OnReceive(Context context, Intent intent)
         {
@@ -170,7 +194,7 @@ namespace DisertationProject.Controller
 
         protected virtual void OnSomeDataReceived(EventArgs e)
         {
-            SomeDataReceived?.Invoke(this, e);
+            SongCompletionEventHandler?.Invoke(this, e);
         }
     }
 }

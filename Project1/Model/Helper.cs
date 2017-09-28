@@ -1,7 +1,6 @@
+using DisertationProject.Model;
 using System;
 using System.Collections.Generic;
-using ActionEvent = DisertationProject.Model.Globals.ActionEvent;
-using Emotion = DisertationProject.Model.Globals.Emotions;
 
 namespace DisertationProject.Controller
 {

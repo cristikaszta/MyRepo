@@ -64,6 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\Enumerations.cs" />
     <Compile Include="Model\SongListAdapter.cs" />
     <Compile Include="Model\Helper.cs" />
     <Compile Include="Controller\DataController.cs" />

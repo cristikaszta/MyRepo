@@ -1,14 +1,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using DisertationProject.Model;
 
 namespace DisertationProject.Model
 {
@@ -35,7 +27,7 @@ namespace DisertationProject.Model
         /// <summary>
         /// The current position in the playlist
         /// </summary>
-        private int currentPosition;
+        public int Position { get; set; }
 
         /// <summary>
         /// The song list
@@ -45,12 +37,12 @@ namespace DisertationProject.Model
         /// <summary>
         /// Suffle property
         /// </summary>
-        public Globals.State Shuffle { get; set; }
+        public ToggleState Shuffle { get; set; }
 
         /// <summary>
         /// Repeat property
         /// </summary>
-        public Globals.State Repeat { get; set; }
+        public ToggleState Repeat { get; set; }
 
         /// <summary>
         /// Check if posiion is at end
@@ -59,7 +51,7 @@ namespace DisertationProject.Model
         {
             get
             {
-                if (currentPosition == totalItems - 1)
+                if (Position == totalItems - 1)
                     return true;
                 return false;
             }
@@ -72,7 +64,7 @@ namespace DisertationProject.Model
         {
             get
             {
-                if (currentPosition == 0)
+                if (Position == 0)
                     return true;
                 return false;
             }
@@ -84,9 +76,9 @@ namespace DisertationProject.Model
         /// </summary>
         private void Initialize()
         {
-            currentPosition = 0;
-            Shuffle = Globals.State.Off;
-            Repeat = Globals.State.Off;
+            Position = 0;
+            Shuffle = ToggleState.Off;
+            Repeat = ToggleState.Off;
         }
 
         /// <summary>
@@ -146,7 +138,7 @@ namespace DisertationProject.Model
         /// <returns>Current song</returns>
         public Song GetCurrentSong()
         {
-            return SongList[currentPosition];
+            return SongList[Position];
         }
 
         /// <summary>
@@ -154,8 +146,8 @@ namespace DisertationProject.Model
         /// </summary>
         public void IncrementPosition()
         {
-            if (currentPosition < totalItems - 1)
-                currentPosition++;
+            if (Position < totalItems - 1)
+                Position++;
         }
 
         /// <summary>
@@ -163,8 +155,8 @@ namespace DisertationProject.Model
         /// </summary>
         public void DecrementPosition()
         {
-            if (currentPosition > 0)
-                currentPosition--;
+            if (Position > 0)
+                Position--;
         }
 
         /// <summary>
@@ -172,7 +164,7 @@ namespace DisertationProject.Model
         /// </summary>
         public void ResetPosition()
         {
-            currentPosition = 0;
+            Position = 0;
         }
 
         /// <summary>
@@ -180,7 +172,7 @@ namespace DisertationProject.Model
         /// </summary>
         public void SetPositionToEnd()
         {
-            currentPosition = totalItems - 1;
+            Position = totalItems - 1;
         }
     }
 }
